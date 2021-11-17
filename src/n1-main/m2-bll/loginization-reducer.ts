@@ -1,5 +1,8 @@
 
-const loginInitState = {};
+const loginInitState = {
+    login:'',
+    password:''
+};
 
 export type LoginInitStateType = typeof loginInitState;
 export type LoginActionType = any;
