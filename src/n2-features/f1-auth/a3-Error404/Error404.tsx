@@ -1,7 +1,7 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import {Link } from "react-router-dom";
 import s from './Error404.module.css'
-import {ROUTES_PATH} from "../../../n1-main/m1-ui/routes/Routes";
+
 export const Error404 = () => {
     return (
         <div className={s.body}>
@@ -11,9 +11,9 @@ export const Error404 = () => {
                     <h4 data-text={"Oops! Page not found!"}>Oops! Page not found!</h4>
                     <p>Sorry, the page you are looking for doesn't exist</p>
                     <div className={s.btn}>
-                        <NavLink to={ROUTES_PATH.LOGIN}>
+                        <Link to={'login'}>
                             <button>return</button>
-                        </NavLink>
+                        </Link>
                     </div>
                 </div>
             </div>
