@@ -7,7 +7,9 @@ const instance = axios.create({
 })
 //{ _id: string, email: string, name: string, avatar?: string, publicCardPacksCount: number}
 export const loginAPI = {
-    makeLogin(loginPayload: LoginInitStateType) {
-        return instance.post<LoginInitStateType,AxiosResponse<{ _id: string, email: string, name: string, avatar?: string, publicCardPacksCount: number}>>('/auth/login',loginPayload)
+    makeLogin(loginPayload: {email: string, password: string, rememberMe: boolean}) {
+        return instance.post<typeof loginPayload,AxiosResponse<{ _id: string, email: string, name: string, avatar?: string, publicCardPacksCount: number}>>('/auth/login',loginPayload)
     }
 }
+
+export type ResponseType = {}
