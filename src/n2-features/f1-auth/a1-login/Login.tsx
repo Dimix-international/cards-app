@@ -1,24 +1,36 @@
 import React from "react";
-import {Formik} from 'formik';
+import { useFormik} from 'formik';
 import SuperInputText from "../../../n1-main/m1-ui/common/SuperInputText/SuperInputText";
 import SuperButton from "../../../n1-main/m1-ui/common/SuperButton/SuperButton";
 import * as yup from 'yup'
+import {useDispatch} from "react-redux";
+
 export const Login = () => {
     const validationSchema = yup.object().shape({
-        name:yup.string().required('Обязательное поле').typeError('Поле должно быть строкой')
+        login: yup.string().required('Обязательное поле').typeError('Поле должно быть строкой').min(8,'Логин должен' +
+            ' состоять не менее из 8 символов'),
+        password: yup.string().required('Обязательное поле').typeError('Поле должно быть строкой').min(8,'Пароль' +
+            ' должен' +
+            ' состоять не менее из 8 символов'),
     })
+    const formik = useFormik({
+        initialValues: {login: '', password: ''},
+        validationSchema:validationSchema,
+        onSubmit: (values) => {
+            alert(JSON.stringify(values) )
+        }
+    })
+    const dispatch = useDispatch()
+
     return (
         <div>
-            <Formik validationSchema={validationSchema} initialValues={{login: '', password: ''}} validateOnBlur onSubmit={(values => console.log(values))}>
-                {({values,errors,touched,handleChange,handleBlur,isValid,dirty})=>(
-                    <div>
-                        <SuperInputText error={touched.login && errors.login ? errors.login : ''} placeholder={'Login'} name={'login'} onChange={handleChange} onBlur={handleBlur} value={values.login}/>
-                        <SuperInputText type={'password'} error={touched.password && errors.password ? errors.password : ''} placeholder={'Password'} name={'password'} onChange={handleChange} onBlur={handleBlur} value={values.password}/>
-                        <SuperButton onClick={()=>{
-                            console.log(values)}} value={'Submit'} disabled={!isValid && !dirty} type={"submit"}/>
+            <form onSubmit={formik.handleSubmit}>
+                    <div style={{display: "flex", flexDirection: 'column'}}>
+                        <SuperInputText placeholder={'Логин'} error={formik.touched.login && formik.errors.login ? formik.errors.login : ''}{...formik.getFieldProps('login')}/>
+                        <SuperInputText placeholder={'Пароль'} {...formik.getFieldProps('password')} hidden error={formik.touched.password && formik.errors.password ? formik.errors.password : ''}/>
+                        <SuperButton value={'Submit'} type={"submit"}/>
                     </div>
-                )}
-            </Formik>
+            </form>
         </div>
     )
 }
