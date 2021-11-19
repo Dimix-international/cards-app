@@ -1,15 +1,22 @@
 
 .default {
-    background-color: #666565;
-    color:#fff;
-    transition: all 0.5s;
-    width: 100px;
-    padding: 5px 0;
-    font-size: 18px;
-    border: 1px solid #000;
+    display: inline-block;
+    padding: 0.5em 1.7em;
+    margin: 0 0.1em 0.1em 0;
+    border: 0.16em solid rgb(255, 255, 255);
+    border-radius: 2em;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    color: #ffffff;
+    text-shadow: 0 0.04em 0.04em rgba(255, 255, 255, 0.253);
+    text-align: center;
+    transition: all 0.2s;
 }
 .default:hover{
-    background-color: #a7a5a5;
+    color: black;
+    background-color: rgb(255, 255, 255);
 }
 
 .default:disabled {

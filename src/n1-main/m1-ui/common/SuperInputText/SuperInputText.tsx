@@ -23,6 +23,7 @@ const SuperInputText: React.FC<SuperInputTextPropsType> = (
         className, spanClassName,
         name,
         hidden,
+        placeholder,
         ...restProps// все остальные пропсы попадут в объект restProps
     }
 ) => {
@@ -41,10 +42,12 @@ const SuperInputText: React.FC<SuperInputTextPropsType> = (
     }
 
     const finalSpanClassName = `${s.error} ${spanClassName ? spanClassName : ''}`
-    const finalInputClassName = error ? ` ${s.errorInput}` : `${s.superInput} ${className}`
+    const finalInputClassName = error ? ` ${s.errorInput} ${s.superInput}` : `${s.superInput} ${className}`
+    const finalBarClassName = error ? ` ${s.errorBar} ${s.bar}` : `${s.bar} `
+    const finalLabelClassName = error ? ` ${s.errorLabel} ${s.label}` : `${s.label} `
 
     return (
-        <>
+        <div className={s.group}>
             <input
                 value={restProps.value}
                 type={hidden ? 'password' : 'text'}
@@ -52,11 +55,12 @@ const SuperInputText: React.FC<SuperInputTextPropsType> = (
                 onChange={onChangeCallback}
                 onKeyPress={onKeyPressCallback}
                 className={finalInputClassName}
-
                 {...restProps} // отдаём инпуту остальные пропсы если они есть (value например там внутри)
             />
+            <span className={finalBarClassName}> </span>
+            <label className={finalLabelClassName}>{placeholder}</label>
             {error && <span className={finalSpanClassName}>{error}</span>}
-        </>
+        </div>
     )
 }
 
