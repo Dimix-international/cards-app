@@ -1,16 +1,24 @@
-import React, {FC} from "react";
+import React, {FC, useEffect} from "react";
 import { Formik } from 'formik';
 import SuperInputText from "../../../n1-main/m1-ui/common/SuperInputText/SuperInputText";
 import SuperButton from "../../../n1-main/m1-ui/common/SuperButton/SuperButton";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import SuperCheckbox from "../../../n1-main/m1-ui/common/SuperCheckbox/SuperCheckbox";
-import { makeAuthTH} from "../../../n1-main/m2-bll/loginization-reducer";
+import {getAuthTH, makeAuthTH} from "../../../n1-main/m2-bll/loginization-reducer";
 import {loginValidation} from "./utils/validationSettings";
 import {Link} from "react-router-dom";
+import {AppRootStateType} from "../../../n1-main/m2-bll/state";
 
 export const Login :FC = () => {
     const dispatch = useDispatch()
+    const isAuth = useSelector<AppRootStateType,boolean>(state=>state.loginization.isAuth)
 
+    useEffect(()=>{
+        dispatch(getAuthTH())
+    },[])
+    if (isAuth) {
+        return <div>You're already logged</div>
+    }
     return (
         <div style={{
             display: 'flex',
