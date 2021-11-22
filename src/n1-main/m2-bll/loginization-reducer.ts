@@ -23,12 +23,13 @@ export const loginReducer = slice.reducer
 export const makeAuthTH = (loginPayload: { email: string, password: string, rememberMe: boolean }) => (dispatch: Dispatch) => {
     loginAPI.makeLogin(loginPayload).then((res) => {
         if (res.data.error) {
-            console.log(res.data.error)
+            alert(res.data.error)
         } else {
+            alert(res.data._id)
             dispatch(makeAuth(true))
         }
     }).catch((e) => {
-        console.log(e)
+        alert(e.error)
     })
 
 }

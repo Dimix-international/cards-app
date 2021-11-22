@@ -24,6 +24,7 @@ const SuperInputText: React.FC<SuperInputTextPropsType> = (
         name,
         hidden,
         placeholder,
+        onBlur,
         ...restProps// все остальные пропсы попадут в объект restProps
     }
 ) => {

@@ -31,4 +31,25 @@ export const loginAPI = {
     }
 }
 
-export type ResponseType = {}
+export type ResponseType = {
+    Avatar?:string,
+    Created:string,
+    deviceTokens:Array<{_id:string, device:string, token:string,tokenDeathTime:string}>,
+    Email:string,
+    isAdmin:boolean,
+    name:string,
+    publicCardPacksCount:number,
+    rememberMe:boolean,
+    token:string,
+    tokenDeathTime:string,
+    Updated:string,
+    verified:boolean,
+    __v:number,
+    _id:string
+    emailRegExp:object,
+    error:string,
+    in:string,
+    isEmailValid:boolean,
+    isPassValid:true,
+    passwordRegExp:string
+}

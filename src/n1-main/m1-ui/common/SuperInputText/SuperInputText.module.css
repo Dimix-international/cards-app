@@ -25,11 +25,13 @@
     font-family: "Roboto", sans-serif;
     font-weight: 200;
     color: red;
+    display: block;
+    margin: 5px 0 0 10px;
 }
 
 .group {
     position: relative;
-    margin-bottom: 30px;
+    height: 75px;
 }
 .label {
     font-family: "Roboto", sans-serif;
@@ -46,7 +48,6 @@
 }
 .errorLabel{
     color: #ff0000;
-
 }
 /* active state */
 .superInput:focus ~ .label, .superInput:valid ~ .label {

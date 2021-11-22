@@ -27,18 +27,20 @@ export const Login: FC = () => {
             <Formik validationSchema={loginValidation} initialValues={{email: '', password: '', rememberMe: false}}
                     onSubmit={(values) => {
                         dispatch(makeAuthTH(values))
-                    }}>
+                    }} validateOnMount >
                 {(formik) => {
                     return (<form onSubmit={formik.handleSubmit}>
-                        <SuperInputText error={formik.touched.email && formik.errors.email ? 'Обязательное поле' : ''}
+                        <SuperInputText
                                         required placeholder={'Email'}
-                                        {...formik.getFieldProps('email')}/>
-                        <SuperInputText error={formik.touched.password && formik.errors.password ? 'Обязательное' +
-                            ' поле' : ''} required placeholder={'Password'} {...formik.getFieldProps('password')}
-                                        hidden/>
+                                        {...formik.getFieldProps('email')}
+                                        error={ formik.errors.email && formik.dirty ? 'Обязательное' +
+                                            ' поле' : ''}/>
+                        <SuperInputText required placeholder={'Password'}{...formik.getFieldProps('password')}
+                                        error={ formik.errors.password && formik.dirty ? 'Обязательное' +
+                                            ' поле' : ''} hidden/>
                         <div className={s.actionsContainer}><SuperCheckbox
                             children={'Remember Me'} {...formik.getFieldProps('rememberMe')}/>
-                            <SuperButton value={'Submit'} type={"submit"}/></div>
+                            <SuperButton disabled={!formik.isValid || formik.isSubmitting} value={'Submit'} type={"submit"}/></div>
                     </form>)
                 }}
 
