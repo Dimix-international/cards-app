@@ -1,0 +1,38 @@
+.spanLogo{
+    font-family: Roboto, sans-serif;
+    font-weight: 300;
+    font-size: 45px;
+    color: rgb(32, 150, 243);
+}
+
+.links{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 44px;
+    justify-content: space-around;
+    font-family: Roboto, sans-serif;
+    font-weight: 300;
+}
+.links a {
+    color: rgb(32, 150, 243);
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    height: 450px;
+    width: 350px;
+    align-items: center;
+    justify-content: space-evenly;
+    box-shadow: 0 0 50px #ccc;
+}
+
+.actionsContainer{
+    display: flex;
+    padding: 8px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}

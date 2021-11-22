@@ -2,8 +2,14 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 import s from './Sidebar.module.css'
+import SuperButton from "../../common/SuperButton/SuperButton";
+import {useDispatch, useSelector} from "react-redux";
+import {logOutAuthTH} from "../../../m2-bll/loginization-reducer";
+import {AppRootStateType} from "../../../m2-bll/state";
 
 export const Sidebar = () => {
+    const dispatch = useDispatch()
+    const isAuth = useSelector<AppRootStateType,boolean>(state=>state.loginization.isAuth)
     return (
         <div>
             <ul>
@@ -32,6 +38,11 @@ export const Sidebar = () => {
                         Show components
                     </NavLink>
                 </li>
+                {isAuth && (<li>
+                    <SuperButton onClick={() => {
+                        dispatch(logOutAuthTH())
+                    }} value={'LogOut'}/>
+                </li>)}
             </ul>
         </div>
     )

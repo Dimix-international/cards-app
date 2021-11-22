@@ -10,13 +10,14 @@
     font-family: "Roboto", sans-serif;
     font-weight: 300;
     color: #ffffff;
+    background-color: #2096f3;
     text-shadow: 0 0.04em 0.04em rgba(255, 255, 255, 0.253);
     text-align: center;
     transition: all 0.2s;
 }
-.default:hover{
-    color: black;
-    background-color: rgb(255, 255, 255);
+
+.default:hover {
+    background-color: #0284e8;
 }
 
 .default:disabled {
@@ -26,10 +27,11 @@
 
 .red {
     background: red;
-    color:#fff;
+    color: #fff;
     transition: all 0.5s;
 }
-.red:hover{
+
+.red:hover {
     background-color: yellow;
-    color:#000;
+    color: #000;
 }

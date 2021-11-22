@@ -1,9 +1,4 @@
 .superInput {
-    /*margin-bottom: 10px;*/
-    /*outline:none;*/
-    /*width: 200px;*/
-    /*height: 30px;*/
-    /*border: 1px solid #000;*/
     font-size: 16px;
     padding: 10px;
     display: block;
@@ -12,17 +7,10 @@
     border-bottom: 1px solid #ccc;
 }
 .superInput:focus {
-    /*outline:none;*/
-    /*border: 1px solid blue;*/
     outline: none;
 }
 .errorInput {
-    /*margin-bottom: 10px;*/
-    /*outline:none;*/
-    /*width: 200px;*/
-    /*height: 30px;*/
-    /*border: 1px solid red;*/
-    /*background-color: yellow;*/
+
     font-size: 16px;
     padding: 10px;
     display: block;
@@ -31,9 +19,7 @@
     border-bottom: 1px solid #ccc;
 }
 .errorInput:focus {
-    /*outline:none;*/
-    /*border: 1px solid red;*/
-    /*background-color: yellow;*/
+
 }
 .error {
     font-family: "Roboto", sans-serif;
@@ -66,7 +52,7 @@
 .superInput:focus ~ .label, .superInput:valid ~ .label {
     top: -15px;
     font-size: 14px;
-    color: #5264AE;
+    color: #2096f3;
 }
 
 .superInput:focus ~ .errorLabel, .superInput:valid ~ .errorLabel {
@@ -85,7 +71,7 @@
     width: 0;
     bottom: 0;
     position: absolute;
-    background: #5264AE;
+    background: #2096f3;
     transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;

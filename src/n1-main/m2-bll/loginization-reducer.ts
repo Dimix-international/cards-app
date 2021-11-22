@@ -1,54 +1,58 @@
 import {Dispatch} from "redux";
 import {loginAPI} from "../../n2-features/auth-api/local-api";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const loginInitState = {
+const initialState = {
     isAuth: false
 };
 
-export type LoginInitStateType = {
-    isAuth: boolean
-};
-export type LoginActionType = ReturnType<typeof makeAuth>;
-
-export const loginReducer = (state: LoginInitStateType = loginInitState, action: LoginActionType): LoginInitStateType => {
-    switch (action.type) {
-        case "MAKE_AUTH":
-            return {...state, isAuth: action.auth}
-        default:
-            return state
+const slice = createSlice({
+    name: 'login',
+    initialState,
+    reducers: {
+        makeAuth(state, action: PayloadAction<boolean>) {
+            state.isAuth = action.payload
+        }
     }
-}
+})
 
-export const makeAuth = (auth: boolean) => {
-    return {type: 'MAKE_AUTH', auth} as const
-}
-//(loginPayload: {login: string, password: string, rememberMe: boolean})
+export const {makeAuth} = slice.actions
+export const loginReducer = slice.reducer
+
+
 export const makeAuthTH = (loginPayload: { email: string, password: string, rememberMe: boolean }) => (dispatch: Dispatch) => {
-    alert('Trying to get access')
     loginAPI.makeLogin(loginPayload).then((res) => {
         if (res.data.error) {
-            alert(res.data.error)
+            console.log(res.data.error)
         } else {
             dispatch(makeAuth(true))
         }
-        alert('Access granted')
-    }).catch(() => {
-        alert('Access denied')
+    }).catch((e) => {
+        console.log(e)
     })
 
 }
 
-export const getAuthTH = () => (dispatch: Dispatch) => {
+export const checkAuthTH = () => (dispatch: Dispatch) => {
     loginAPI.getLoginInfo().then((res) => {
-        if (res.data.data._id) {
-            debugger
+        if (res.data._id) {
             dispatch(makeAuth(true))
         }
 
     }).catch((e) => {
         console.log(e)
-        debugger
-        dispatch(makeAuth(true))
+    })
+
+}
+
+export const logOutAuthTH = () => (dispatch: Dispatch) => {
+    loginAPI.logOut().then((res) => {
+        if (res.data.info) {
+            console.log(res.data.info)
+            dispatch(makeAuth(false))
+        }
+    }).catch((e) => {
+        console.log(e)
     })
 
 }

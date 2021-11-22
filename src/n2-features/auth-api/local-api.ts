@@ -1,5 +1,4 @@
 import axios, {AxiosResponse} from "axios";
-import {LoginInitStateType} from "../../n1-main/m2-bll/loginization-reducer";
 
 const instance = axios.create({
     baseURL: 'http://localhost:7542/2.0/',
@@ -18,17 +17,17 @@ export const loginAPI = {
         }>>('/auth/login', loginPayload)
     },
     getLoginInfo(){
-        return instance.post<AxiosResponse<{
+        return instance.post<{
             _id: string, email: string, name: string, avatar?: string, publicCardPacksCount: number, created: Date,
             updated: Date,
             isAdmin: boolean,
             verified: boolean, // подтвердил ли почту
             rememberMe: boolean,
             error?:string
-        }>>('/auth/me')
+        }>('/auth/me')
     },
     logOut(){
-        return instance.delete<AxiosResponse<{info:string,error?:string }>>('/auth/me')
+        return instance.delete<{info:string,error?:string }>('/auth/me')
     }
 }
 
