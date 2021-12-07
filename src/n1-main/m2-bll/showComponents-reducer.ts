@@ -1,7 +1,10 @@
-const componentsInitState = {};
+const componentsInitState = {
+    appInit: false
+};
 
 export type ComponentsInitStateType = typeof componentsInitState;
 export type ComponentsActionType = any;
+
 
 export const componentsReducer =
     (state: ComponentsInitStateType = componentsInitState,

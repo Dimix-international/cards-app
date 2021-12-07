@@ -1,20 +1,37 @@
+
 .default {
-    background-color: blue;
-    border-radius: 20px;
-    border: none;
-    height: 35px;
-    font-size: 18px;
+    display: inline-block;
+    padding: 0.5em 1.7em;
+    margin: 0 0.1em 0.1em 0;
+    border: 0.16em solid rgb(255, 255, 255);
+    border-radius: 2em;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    color: #ffffff;
+    background-color: #2096f3;
+    text-shadow: 0 0.04em 0.04em rgba(255, 255, 255, 0.253);
     text-align: center;
-    line-height: 35px;
-    color:#fff;
-    padding: 0 10px ;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
-.default:hover{
-    background-color: #928f8f;
+
+.default:hover {
+    background-color: #0284e8;
 }
 
 .default:disabled {
     cursor: initial;
     background-color: #d5d5d5;
+}
+
+.red {
+    background: red;
+    color: #fff;
+    transition: all 0.5s;
+}
+
+.red:hover {
+    background-color: yellow;
+    color: #000;
 }
