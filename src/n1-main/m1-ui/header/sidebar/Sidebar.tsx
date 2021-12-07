@@ -5,8 +5,8 @@ import s from './Sidebar.module.css'
 
 export const Sidebar = () => {
     return (
-        <div>
-            <ul>
+        <div className={s.sidebar}>
+            <ul className={s.list}>
                 <li>
                     <NavLink to={'/login'}>
                         Login
@@ -20,16 +20,6 @@ export const Sidebar = () => {
                 <li>
                     <NavLink to={'/recovery-password'}>
                         Recovery password
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to={'/new-password'}>
-                        New password
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to={'/showing-components'}>
-                        Show components
                     </NavLink>
                 </li>
             </ul>

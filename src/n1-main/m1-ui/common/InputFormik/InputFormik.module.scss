@@ -1,0 +1,35 @@
+.item {
+  position: relative;
+}
+.label {
+  display: block;
+  font-size: 14px;
+  color: grey;
+  margin: 0;
+}
+.img {
+  position: absolute;
+  top:25px;
+  right: 10px;
+  width: 15px;
+  height: 10px;
+  cursor: pointer;
+  z-index: 5;
+}
+.input {
+  width: 100%;
+  border-bottom: 2px solid #a8a7a7;
+  padding: 5px;
+  font-size: 18px;
+  height: 30px;
+  margin-bottom: 5px;
+
+  &::placeholder{
+    color:grey;
+  }
+
+  &:focus {
+    border: 2px solid #0390bb;
+    border-radius: 5px;
+  }
+}

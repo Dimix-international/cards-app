@@ -1,0 +1,29 @@
+.text, .text__sub {
+    font-size: 16px;
+    font-weight: 300;
+    color:grey;
+    margin-bottom: 20px;
+}
+.btn {
+    width: 80%;
+    margin: 0 auto 30px;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 22px -1px rgba(34, 60, 80, 0.2);
+}
+.text__sub {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.link {
+    text-align: center;
+    a {
+        font-size: 16px;
+        color: blue;
+        letter-spacing: 1px;
+        font-weight: 600;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

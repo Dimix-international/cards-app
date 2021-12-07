@@ -1,0 +1,18 @@
+.tab {
+    height: 100px;
+    width: 20rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 5px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #979797;
+    font-weight: 500;
+}
+.active {
+    border-bottom: 4px solid #02028b;
+    background-color: rgba(151, 150, 150, 0.4);
+    color: #02028b;
+    font-weight: 500;
+}

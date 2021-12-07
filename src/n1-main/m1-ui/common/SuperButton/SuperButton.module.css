@@ -1,28 +1,20 @@
-
 .default {
-    background-color: #666565;
-    color:#fff;
-    transition: all 0.5s;
-    width: 100px;
-    padding: 5px 0;
+    background-color: blue;
+    border-radius: 20px;
+    border: none;
+    height: 35px;
     font-size: 18px;
-    border: 1px solid #000;
+    text-align: center;
+    line-height: 35px;
+    color:#fff;
+    padding: 0 10px ;
+    transition: all 0.3s;
 }
 .default:hover{
-    background-color: #a7a5a5;
+    background-color: #928f8f;
 }
 
 .default:disabled {
     cursor: initial;
     background-color: #d5d5d5;
-}
-
-.red {
-    background: red;
-    color:#fff;
-    transition: all 0.5s;
-}
-.red:hover{
-    background-color: yellow;
-    color:#000;
 }

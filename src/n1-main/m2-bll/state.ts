@@ -1,38 +1,38 @@
-import {LoginInitStateType, loginReducer} from "./loginization-reducer";
-import {applyMiddleware, combineReducers, createStore, Store} from "redux";
-import {NewPassActionType, newPassReducer} from "./newPass-reducer";
-import {
-    RecoverPassActionType,
-    recoveryPassReducer
-} from "./recovery-passw-reducer";
-import {registerReducer, RegistrActionType} from "./registration-reducer";
-import {
-    ComponentsActionType,
-    componentsReducer
-} from "./showComponents-reducer";
-import thunk, {ThunkAction} from "redux-thunk";
+import {loginReducer} from "./loginization-reducer";
+import {combineReducers} from "redux";
+//import {newPassReducer} from "./newPass-reducer";
+import {recoveryPassReducer} from "./recovery-passw-reducer";
+
+import thunk, {ThunkDispatch} from "redux-thunk";
+import {AnyAction, configureStore} from "@reduxjs/toolkit";
+import {appReducer} from "./app-reducer";
+//import {registrationReducer} from "./registration-reducer";
+import {_authApi} from "../m3-dal/auth-api";
+import {cardsApi} from "../m3-dal/cards_pack";
 
 
 export const AppRootReducer = combineReducers({
     loginization: loginReducer,
-    newPassword: newPassReducer,
+   // registration: registrationReducer,
+   // newPassword: newPassReducer,
     recoveryPassword: recoveryPassReducer,
-    registration: registerReducer,
-    showComponents: componentsReducer
+    app: appReducer,
+    [_authApi.reducerPath] : _authApi.reducer,
+    [cardsApi.reducerPath] : cardsApi.reducer,
 });
 
 export type AppRootStateType = ReturnType<typeof AppRootReducer>;
-export const store:Store<AppRootStateType, AppActionsType> = createStore(AppRootReducer, applyMiddleware(thunk));
 
-export type AppActionsType =
-    | LoginInitStateType
-    | NewPassActionType
-    | RecoverPassActionType
-    | RegistrActionType
-    | ComponentsActionType
+export const store = configureStore({
+    reducer: AppRootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
+        _authApi.middleware,
+        cardsApi.middleware
+    )
+})
 
-export type AppThunkType<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AppActionsType>
 
+export type ApplicationDispatch = ThunkDispatch<AppRootStateType, void, AnyAction>
 
 //@ts-ignore
 window.store = store;
