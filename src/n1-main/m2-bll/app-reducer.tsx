@@ -8,7 +8,8 @@ type ErrorType = string | null;
 const initialAppState = {
     status: 'idle' as RequestStatusType,
     error: null as ErrorType,
-    isInitialized: false
+    isInitialized: false,
+    isAuthUser: false
 }
 
 export type InitialAppStateType = typeof initialAppState;
@@ -25,10 +26,22 @@ const slice = createSlice({
         },
         setAppIsInitialized(state, action: PayloadAction<boolean>) {
             state.isInitialized = action.payload
+        },
+        setAppIsAuth(state, action: PayloadAction<boolean>) {
+            state.isAuthUser = action.payload
         }
-    }
+    },
+/*    extraReducers: (builder) => {
+        builder.addMatcher(
+            api.endpoints.login.matchFulfilled,
+            (state, { payload }) => {
+                state.token = payload.token
+                state.user = payload.user
+            }
+        )
+    },*/
 })
 
 export const appReducer = slice.reducer;
 
-export const {setAppStatus, setAppError, setAppIsInitialized} = slice.actions;
+export const {setAppStatus, setAppError, setAppIsInitialized, setAppIsAuth} = slice.actions;

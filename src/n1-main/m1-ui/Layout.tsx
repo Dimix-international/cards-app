@@ -5,27 +5,29 @@ import s from './Layout..module.scss'
 import {Footer} from "./footer/Footer";
 import {FinallyErrorResponseType} from "../m3-dal/auth-api";
 import {Outlet} from 'react-router-dom';
+import {useAppSelector} from "../../hook/redux";
 
 type LayoutType = {
-    error: FinallyErrorResponseType
+    error?: FinallyErrorResponseType
 }
 export const Layout: React.FC<LayoutType> = ({error}) => {
+
+    const isAuth = useAppSelector(state => state.app.isAuthUser);
 
     return (
         <>
             {
-                error.data === undefined
-                    ? <div className={'errorNetwork'}>Сервер временно недоступен =(</div>
-                    : error?.data?.error
-                        ? <div className={s.containerLogin}>
-                             <Outlet/>
-                             <div className={'error'}>{error.data.error}</div>
+                isAuth ?
+                    <div className={s.container}>
+                        <Header/>
+                        <Main/>
+                        <Footer/>
+                    </div>
+                    : error && error.data === undefined
+                        ? <div className={'errorNetwork'}>Сервер временно недоступен =(</div>
+                        : <div className={s.containerLogin}>
+                         <Outlet/>
                         </div>
-                        : <div className={s.container}>
-                                <Header/>
-                                <Main/>
-                                <Footer/>
-                            </div>
             }
         </>
     );

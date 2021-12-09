@@ -1,9 +1,9 @@
-import {Dispatch} from "redux";
-import {loginAPI} from "../../n2-features/auth-api/local-api";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {ResponseRegistrationType} from "../m3-dal/auth-api";
 
 const initialState = {
-    isAuth: false
+    isAuth: false,
+    user: {} as ResponseRegistrationType,
 };
 
 const slice = createSlice({
@@ -12,49 +12,14 @@ const slice = createSlice({
     reducers: {
         makeAuth(state, action: PayloadAction<boolean>) {
             state.isAuth = action.payload
+        },
+        setUser(state, action: PayloadAction<ResponseRegistrationType>) {
+            state.user = action.payload
         }
     }
 })
 
-export const {makeAuth} = slice.actions
+export const {makeAuth, setUser} = slice.actions
 export const loginReducer = slice.reducer
 
-
-export const makeAuthTH = (loginPayload: { email: string, password: string, rememberMe: boolean }) => (dispatch: Dispatch) => {
-    loginAPI.makeLogin(loginPayload).then((res) => {
-        if (res.data.error) {
-            alert(res.data.error)
-        } else {
-            alert(res.data._id)
-            dispatch(makeAuth(true))
-        }
-    }).catch((e) => {
-        alert(e.error)
-    })
-
-}
-
-export const checkAuthTH = () => (dispatch: Dispatch) => {
-    loginAPI.getLoginInfo().then((res) => {
-        if (res.data._id) {
-            dispatch(makeAuth(true))
-        }
-
-    }).catch((e) => {
-        console.log(e)
-    })
-
-}
-
-export const logOutAuthTH = () => (dispatch: Dispatch) => {
-    loginAPI.logOut().then((res) => {
-        if (res.data.info) {
-            console.log(res.data.info)
-            dispatch(makeAuth(false))
-        }
-    }).catch((e) => {
-        console.log(e)
-    })
-
-}
 

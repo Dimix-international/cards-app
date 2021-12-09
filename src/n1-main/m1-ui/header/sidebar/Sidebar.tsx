@@ -1,38 +1,37 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import s from './Sidebar.module.css'
 import SuperButton from "../../common/SuperButton/SuperButton";
-import {useDispatch, useSelector} from "react-redux";
-import {logOutAuthTH} from "../../../m2-bll/loginization-reducer";
-import {AppRootStateType} from "../../../m2-bll/state";
+import {useAppDispatch} from "../../../../hook/redux";
+import {useLogOutUserMutation} from "../../../m3-dal/auth-api";
+import {setAppIsAuth, setAppStatus} from "../../../m2-bll/app-reducer";
 
 export const Sidebar = () => {
-    const dispatch = useDispatch()
-    const isAuth = useSelector<AppRootStateType,boolean>(state=>state.loginization.isAuth)
+    const dispatch = useAppDispatch()
+
+    const [logOutUser] = useLogOutUserMutation();
+    const navigate = useNavigate();
+
+    const logOutHandler = async () => {
+        dispatch(setAppStatus('loading'));
+        try {
+            await logOutUser();
+            dispatch(setAppIsAuth(false))
+            dispatch(setAppStatus('succeeded'));
+            navigate('/login', {replace: true})
+        } catch (e) {
+            dispatch(setAppStatus('failed'));
+        }
+    }
+
+
     return (
         <div className={s.sidebar}>
             <ul className={s.list}>
                 <li>
-                    <NavLink to={'/login'}>
-                        Login
-                    </NavLink>
+                    <SuperButton onClick={logOutHandler} value={'LogOut'}>LogOut</SuperButton>
                 </li>
-                <li>
-                    <NavLink to={'/registration'}>
-                        Registration
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to={'/recovery-password'}>
-                        Recovery password
-                    </NavLink>
-                </li>
-                {isAuth && (<li>
-                    <SuperButton onClick={() => {
-                        dispatch(logOutAuthTH())
-                    }} value={'LogOut'}/>
-                </li>)}
             </ul>
         </div>
     )

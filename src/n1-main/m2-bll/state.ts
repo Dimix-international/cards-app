@@ -8,7 +8,7 @@ import {AnyAction, configureStore} from "@reduxjs/toolkit";
 import {appReducer} from "./app-reducer";
 //import {registrationReducer} from "./registration-reducer";
 import {_authApi} from "../m3-dal/auth-api";
-import {cardsApi} from "../m3-dal/cards_pack";
+import {cardsApi} from "../m3-dal/cards_pack-api";
 
 
 export const AppRootReducer = combineReducers({

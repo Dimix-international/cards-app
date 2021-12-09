@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import './App.css'
-import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import {Login} from "../../n2-features/f1-auth/a1-login/Login";
 import {Register} from "../../n2-features/f1-auth/a2-register/Register";
 import {RecoverPassword} from "../../n2-features/f1-auth/a4-recovery-pass/RecoverPasswor";
@@ -15,37 +15,47 @@ import {
     useCheckAuthUserMutation
 } from "../m3-dal/auth-api";
 import {Loader} from "./common/Loader/Loader";
+import {useAppDispatch} from "../../hook/redux";
+import {setAppIsAuth} from "../m2-bll/app-reducer";
+import {setUser} from "../m2-bll/loginization-reducer";
 
 
 export const App = () => {
 
-    const [isInitialized, setIsInitialized] = useState(false);
 
-    const [checkAuthUser, {error: errorAuthUser}] = useCheckAuthUserMutation();
+    const [checkAuthUser, {
+        error: errorAuthUser,
+        isLoading,
+    }] = useCheckAuthUserMutation();
+
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
         checkAuthUser({}).unwrap()
             .then(res => {
-                setIsInitialized(true)
+                dispatch(setAppIsAuth(true));
+                dispatch(setUser(res))
             })
             .catch(error => {
-                setIsInitialized(true)
-                navigate('/login', {replace: true})
+                navigate('/login', {replace: true});
             })
     }, [])
 
-    if (!isInitialized) {
+    const finallyError = useMemo(() => {
+        return errorAuthUser
+    }, [errorAuthUser])
+
+    if (isLoading) {
         return <Loader/>
     }
-
     return (
         <div className="App">
             <Routes>
                 <Route path="/" element={<Layout
-                    error={errorAuthUser as FinallyErrorResponseType}/>}>
+                    error={finallyError as FinallyErrorResponseType}/>}>
                     <Route index element={<PacksList/>}/>
-                    <Route path={'packs-list'} element={<Navigate to="/"/>}/>
+                    <Route path={'packs-list'} element={<PacksList/>}/>
                     <Route path={'profile'} element={<Profile/>}/>
                     <Route path={'login'} element={<Login/>}/>
                     <Route path={'registration'} element={<Register/>}/>

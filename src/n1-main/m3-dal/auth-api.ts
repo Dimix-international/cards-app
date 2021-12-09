@@ -1,17 +1,7 @@
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
-import {
-    BaseQueryFn,
-    createApi,
-    fetchBaseQuery
-} from "@reduxjs/toolkit/dist/query/react";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
+import {BaseQueryFn, createApi} from "@reduxjs/toolkit/dist/query/react";
 
-const settings = {
-    withCredentials: true
-}
-const instance = axios.create({
-    baseURL: 'http://localhost:7542/2.0/',
-    ...settings
-})
+
 export type FinallyErrorResponseType = {
     status: number
     data: ErrorResponseType
@@ -24,7 +14,7 @@ export type ErrorResponseType = {
     in: string
 }
 
-type ResponseRegistrationType = {
+export type ResponseRegistrationType = {
     created: string
     email: string
     isAdmin: boolean
@@ -36,19 +26,88 @@ type ResponseRegistrationType = {
     __v: number
     _id: number
 }
+export type ResponseLoginizationType = {
+    Avatar?: string,
+    Created: string,
+    deviceTokens: Array<{ _id: string, device: string, token: string, tokenDeathTime: string }>,
+    Email: string,
+    isAdmin: boolean,
+    name: string,
+    publicCardPacksCount: number,
+    rememberMe: boolean,
+    token: string,
+    tokenDeathTime: string,
+    Updated: string,
+    verified: boolean,
+    __v: number,
+    _id: string
+    emailRegExp: object,
+    error: string,
+    in: string,
+    isEmailValid: boolean,
+    isPassValid: true,
+    passwordRegExp: string
+}
+
+
+export type CardPackType = {
+    cardsCount: number
+    created: number
+    deckCover: null | string
+    grade: number
+    more_id: string
+    name: string
+    path: string
+    private: boolean
+    rating: number
+    shots: number
+    type: string
+    updated: Date,
+    user_id: string
+    user_name: string
+    __v: number
+    _id: string
+}
+export type AllCardsType = {
+    cardPacks: Array<CardPackType>,
+    cardPacksTotalCount: number,
+    maxCardsCount: number,
+    minCardsCount: number,
+    page: number,
+    pageCount: number,
+    token: string,
+    tokenDeathTime: number,
+}
+type QueryParamsGetAllCardsType = {
+    packNme?: string,
+    min?: number,
+    max?: number,
+    sortPacks?: '0' | '1',
+    page?: number,
+    pageCount?: number,
+    user_id?: string
+}
+
 export const axiosBaseQuery =
     (
-        {baseUrl}: { baseUrl: string } = {baseUrl: ''}
+        {baseUrl}: { baseUrl: string, } = {baseUrl: ''}
     ): BaseQueryFn<{
         url: string
-        method: AxiosRequestConfig['method']
-        data?: AxiosRequestConfig['data']
+        method: AxiosRequestConfig['method'],
+        data?: AxiosRequestConfig['data'],
+        params?: AxiosRequestConfig['params']
     },
         unknown,
         unknown> =>
-        async ({url, method, data}) => {
+        async ({url, method, data, params}) => {
             try {
-                const result = await axios({url: baseUrl + url, method, data})
+                const result = await axios({
+                    url: baseUrl + url,
+                    method,
+                    data,
+                    params,
+                    withCredentials: true
+                })
                 return {data: result.data}
             } catch (axiosError) {
                 let err = axiosError as AxiosError
@@ -63,7 +122,7 @@ export const axiosBaseQuery =
 
 export const _authApi = createApi({
     reducerPath: 'authApi',
-    //baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
+    /*baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:7542/2.0/', credentials:'include'}), //include, omit, same-origin*/
     baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
     endpoints: (build) => ({
         registrationAuth: build.mutation<void, { email: string, password: string }>({
@@ -80,12 +139,12 @@ export const _authApi = createApi({
                 data: arg
             })
         }),
-        forgotPassword: build.mutation<void, {email:string}>({
+        forgotPassword: build.mutation<void, { email: string }>({
             query: (arg) => ({
                 url: 'https://neko-back.herokuapp.com/2.0/auth/forgot',
                 method: 'POST',
                 data: {
-                    email :arg.email,
+                    email: arg.email,
                     from: 'test-front-admin <dima.dimix94@mail.ru>',
                     message: `<div>
                             <p>Для установки нового пароля, перейдите по ссылке</p>
@@ -96,13 +155,28 @@ export const _authApi = createApi({
                 }
             })
         }),
-        checkAuthUser: build.mutation<void, {}>({
-            query: (arg)=> ({
+        checkAuthUser: build.mutation<ResponseRegistrationType, {}>({
+            query: (arg) => ({
                 url: 'auth/me',
                 method: 'POST',
                 data: arg
+            }),
+        }),
+        makeLoginUser: build.mutation<ResponseLoginizationType, {
+            email: string, password: string, rememberMe: boolean
+        }>({
+            query: (arg) => ({
+                url: 'auth/login',
+                method: 'POST',
+                data: arg
+            }),
+        }),
+        logOutUser: build.mutation<{ info: string }, void>({
+            query: () => ({
+                url: 'auth/me',
+                method: 'DELETE',
             })
-        })
+        }),
     })
 });
 export const {
@@ -110,31 +184,7 @@ export const {
     useCreateNewPasswordMutation,
     useForgotPasswordMutation,
     useCheckAuthUserMutation,
+    useMakeLoginUserMutation,
+    useLogOutUserMutation,
 } = _authApi;
 
-/*export const authApi = {
-    registration(email: string, password: string) {
-        return instance.post<{ email: string, password: string }, AxiosResponse<ResponseRegistrationType >>('auth/register', {
-            email,
-            password,
-        })
-    },
-    createNewPassword(password: string, token: string) {
-        return instance.post<{ password: string, token: string }, AxiosResponse>('auth/set-new-password', {
-            password,
-            token
-        })
-    },
-    forgotPassword(email: string) {
-        return axios.post<{ email: string }, AxiosResponse>('https://neko-back.herokuapp.com/2.0/auth/forgot', {
-            email,
-            from: 'test-front-admin <dima.dimix94@mail.ru>',
-            message: `<div>
-                            <p>Для установки нового пароля, перейдите по ссылке</p>
-                            <a href="https://Dimix-international.github.io/cards-app/new-password/$token$">
-                                Восстановление пароля
-                              </a>
-                        </div>`
-        })
-    }
-}*/

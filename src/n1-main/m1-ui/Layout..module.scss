@@ -10,5 +10,6 @@
     background: linear-gradient(to bottom, #e5d4de 0%,#e1cfdb 5%,#e1d1de 6%,#dbcada 14%,#dbcadc 15%,#d3c4d7 22%,#d4c5da 22%,#d1c2d7 25%,#ccbed7 33%,#c5b6d3 41%,#c5b6d5 44%,#c1b4d2 46%,#beb0d3 53%,#b7abcf 59%,#ada2cd 74%,#a9a0cb 76%,#a9a0cd 78%,#a69dca 81%,#a49bca 86%,#a197c9 88%,#a098cb 90%,#9c94c7 94%,#9b92c9 99%,#9990c7 100%);
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
 }

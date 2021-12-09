@@ -2,7 +2,7 @@
     font-family: Roboto, sans-serif;
     font-weight: 300;
     font-size: 45px;
-    color: rgb(32, 150, 243);
+    color: #000;
 }
 
 .links{
@@ -19,14 +19,17 @@
 }
 
 .container{
+    width: 360px;
+    height: 400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border-radius: 5px;
-    height: 450px;
-    width: 350px;
     align-items: center;
-    justify-content: space-evenly;
-    box-shadow: 0 0 50px #ccc;
+    justify-content: space-between;
+    padding: 20px;
+    box-shadow: 0 5px 10px 2px rgba(34, 60, 80, 0.2);
+    background-color: #fff;
+    border-radius: 5px;
 }
 
 .actionsContainer{
@@ -35,4 +38,9 @@
     width: 100%;
     flex-direction: row;
     justify-content: space-between;
+}
+.btn__send {
+    background-color: blue;
+    flex: 0 1 50%;
+    height: 35px;
 }
