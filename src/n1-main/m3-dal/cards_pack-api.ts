@@ -1,7 +1,7 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
+import {createApi} from "@reduxjs/toolkit/dist/query/react";
 import {AllCardsType, axiosBaseQuery} from "./auth-api";
 
-type QueryParamsGetAllCardsType = {
+export type QueryParamsGetAllCardsType = {
     packNme?: string,
     min?: number,
     max?: number,

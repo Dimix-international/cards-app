@@ -31,15 +31,6 @@ const slice = createSlice({
             state.isAuthUser = action.payload
         }
     },
-/*    extraReducers: (builder) => {
-        builder.addMatcher(
-            api.endpoints.login.matchFulfilled,
-            (state, { payload }) => {
-                state.token = payload.token
-                state.user = payload.user
-            }
-        )
-    },*/
 })
 
 export const appReducer = slice.reducer;

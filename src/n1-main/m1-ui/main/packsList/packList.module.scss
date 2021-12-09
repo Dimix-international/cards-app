@@ -1,5 +1,17 @@
 .packList {
-  padding: 30px;
   background-color: #fff;
+  display: flex;
   border-radius: 10px;
+  overflow: hidden;
+}
+.panelCards {
+  background-color: rgba(219, 220, 220, 0.7);
+  padding: 30px;
+}
+.bodyCards {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  row-gap: 30px;
 }

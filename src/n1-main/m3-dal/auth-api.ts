@@ -78,15 +78,6 @@ export type AllCardsType = {
     token: string,
     tokenDeathTime: number,
 }
-type QueryParamsGetAllCardsType = {
-    packNme?: string,
-    min?: number,
-    max?: number,
-    sortPacks?: '0' | '1',
-    page?: number,
-    pageCount?: number,
-    user_id?: string
-}
 
 export const axiosBaseQuery =
     (
