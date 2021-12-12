@@ -6,6 +6,7 @@ export type PaginationType = {
     pageSize: number,
     pageCurrent: number
     setCurrentPage: (pageNumber: number) => void
+    addClass?:string
 }
 type LiArrayType = {
     className: string,
@@ -14,7 +15,7 @@ type LiArrayType = {
 }
 
 export const Pagination: React.FC<PaginationType> =React.memo( (props) => {
-    const {totalCards, pageSize, pageCurrent , setCurrentPage} = props;
+    const {totalCards, pageSize, pageCurrent , setCurrentPage, addClass} = props;
 
     const [currentPage, setPage] = useState(pageCurrent);//текущая страница*/
 
@@ -153,7 +154,7 @@ export const Pagination: React.FC<PaginationType> =React.memo( (props) => {
 
 
     return (
-            <div className={s.pagination}>
+            <div className={`${s.pagination} ${addClass}`}>
                 <ul className={s.btn}>
                     {
                         showElements().map(li => (

@@ -4,10 +4,10 @@
   background: #fff;
   padding: 8px;
   border-radius: 50px;
-  border: 2px solid rgba(59,73,255,1);
+  border: 2px solid darkblue;
 }
 .pagination ul li{
-  color: rgba(59,73,255,1);
+  color:darkblue;
   line-height: 45px;
   text-align: center;
   font-size: 18px;
@@ -45,5 +45,5 @@
 .pagination ul li.active,
 .pagination ul li.numb:hover {
   color: #fff;
-  background: rgba(59,73,255,1);
+  background: darkblue;
 }

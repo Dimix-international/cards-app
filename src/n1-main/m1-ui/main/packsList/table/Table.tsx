@@ -4,11 +4,14 @@ import {COLUMNS} from "../column";
 import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
+
 type TableType = {
-    data:  Array<CardPackType>
+    data: Array<CardPackType>
+    sortData: () => void
+
 }
 
-export const Table: React.FC<TableType> = ({data}) => {
+export const Table: React.FC<TableType> = ({data, sortData}) => {
 
     const columns = useMemo(() => COLUMNS, []);
     const userId = useAppSelector(state => state.loginization.user._id)
@@ -23,20 +26,24 @@ export const Table: React.FC<TableType> = ({data}) => {
                 Cell: ({row}: any) => {
                     const myCard = data.find(card => Number(card._id) === userId);
                     return (
-                            <div className={'button'}>
-                                {
-                                    myCard && <>
-                                        <button className={'button_delete'}>delete</button>
-                                        <button>edit</button>
-                                    </>
-                                }
-                                <button className={'button'} onClick={() => {
-                                    alert(row.values.price)
-                                }
-                                }>
-                                    Learn
-                                </button>
-                            </div>
+                        <div className={'buttons'}>
+                            {
+                                myCard && <>
+                                    <button
+                                        className={'button_delete'}
+                                    >
+                                        delete
+                                    </button>
+                                    <button>edit</button>
+                                </>
+                            }
+                            <button className={'button'} onClick={() => {
+                                console.log('ok')
+                            }
+                            }>
+                                Learn
+                            </button>
+                        </div>
                     )
                 }
             }
@@ -63,11 +70,26 @@ export const Table: React.FC<TableType> = ({data}) => {
                     headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {
-                                headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps()}>
-                                        {column.render('Header')}
-                                    </th>
-                                ))
+                                headerGroup.headers.map(column => {
+
+                                    if (column.Header === 'Last Updated') {
+                                        return (
+                                            <th
+                                                className={'sort'}
+                                                {...column.getHeaderProps()}
+                                                onClick={sortData}
+                                            >
+                                                {column.render('Header')}
+                                            </th>
+                                        )
+                                    } else {
+                                        return (
+                                            <th {...column.getHeaderProps()}>
+                                                {column.render('Header')}
+                                            </th>
+                                        )
+                                    }
+                                })
                             }
                         </tr>
                     ))

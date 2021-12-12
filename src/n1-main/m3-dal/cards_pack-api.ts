@@ -1,14 +1,15 @@
 import {createApi} from "@reduxjs/toolkit/dist/query/react";
 import {AllCardsType, axiosBaseQuery} from "./auth-api";
 
+export type SortType = '0' | '1'
 export type QueryParamsGetAllCardsType = {
-    packNme?: string,
+    packName?: string | null,
     min?: number,
     max?: number,
-    sortPacks?: '0' | '1',
+    sortPacks?: SortType,
     page?: number,
     pageCount?: number,
-    user_id?: string
+    user_id?: string | null
 }
 
 export const cardsApi = createApi({

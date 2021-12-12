@@ -1,0 +1,37 @@
+.title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #0a0a65;
+  margin-bottom: 20px;
+}
+.range {
+  padding: 0 15px;
+}
+.track {
+  border: 4px solid darkblue !important;
+  background-color: darkblue !important;
+}
+.rail {
+  border: 4px solid blue;
+  background-color: blue !important;
+}
+.thumb {
+  width: 30px !important;
+  height: 30px !important;
+  background-color: #fff !important;
+  border: 5px solid darkblue !important;
+}
+.active {
+  background-color: darkblue !important;
+}
+.label {
+  padding: 5px 10px !important;
+  font-size: 1.4rem !important;
+  background-color: darkblue !important;
+  border-radius: 3px !important;
+  overflow: hidden !important;
+}
+.red {
+  background-color: red !important;
+  color: red !important;
+}

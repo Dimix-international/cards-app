@@ -1,0 +1,23 @@
+.label {
+  flex: 0 1 50%;
+  background-color: #fff;
+  color: #000;
+  height: 35.6px;
+  position: relative;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.radio{
+  display: none;
+}
+.text {
+  font-size: 1.7rem;
+}
+.label.active {
+  color: #fff;
+  background-color: darkblue;
+  cursor: auto;
+}
