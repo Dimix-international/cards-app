@@ -3,7 +3,10 @@ import {Navigate, useSearchParams} from "react-router-dom";
 import {Table} from "./table/Table";
 import {useAppDispatch, useAppSelector} from "../../../../hook/redux";
 import {
-    QueryParamsGetAllCardsType, SortType, useGetAllPacksQuery,
+    QueryParamsGetAllCardsType,
+    SortType,
+    useCreateNewPackMutation,
+    useGetAllPacksQuery,
 
 } from "../../../m3-dal/cards_pack-api";
 import {Loader} from "../../common/Loader/Loader";
@@ -35,12 +38,14 @@ const selectOptions: Array<OptionsSelectType> = [
         value: '50'
     },
 ]
+export type ModalTriggerType = 'add' | 'delete';
 
 export const PacksList = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedOptionId, setSelectedOptionId] = useState(selectOptions[0].id);
+    const[triggerModal, setTriggerModal] = useState<ModalTriggerType>('add');
 
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
@@ -62,6 +67,8 @@ export const PacksList = () => {
     }, {
         skip: !isAuth ,
     });
+
+    const [createPack] = useCreateNewPackMutation();
 
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
@@ -91,9 +98,15 @@ export const PacksList = () => {
         setQueryParams({...queryParams, min: values[0],  max: values[1]})
     },[queryParams]);
 
-    const createNewPack = useCallback( (value:boolean) => {
-        dispatch(setIsOpenedModal(value))
+    const openModalWindow = useCallback( (value:boolean) => {
+        dispatch(setIsOpenedModal(value));
+        setTriggerModal('add');
     },[dispatch, isOpenModal])
+
+    const createNewPack = useCallback((name:string) => {
+        createPack({name});
+        dispatch(setIsOpenedModal(false));
+    },[createPack, dispatch])
 
     useEffect(() => {
 
@@ -108,7 +121,6 @@ export const PacksList = () => {
     },[selectedOptionId])
 
     //блокируем скролл всей страницы, когда открыто модальное окно
-/*
     useEffect(() => {
         if (isOpenModal) {
             document.body.classList.add(s.body_lock)
@@ -116,7 +128,6 @@ export const PacksList = () => {
             document.body.className = ''
         }
     }, [isOpenModal])
-*/
 
     if (!isAuth) {
         return <Navigate to={'/login'} replace/>
@@ -153,7 +164,7 @@ export const PacksList = () => {
                                     callback={setPackName}
                                     addClass={s.input}
                                 />
-                                <button onClick={() => createNewPack(true)}
+                                <button onClick={() => openModalWindow(true)}
                                         className={s.button}>Add new
                                 </button>
                             </div>
@@ -179,10 +190,14 @@ export const PacksList = () => {
                     </div>
                     <Modal
                         isActive={isOpenModal}
-                        setActive={createNewPack}
-                    >
-                        <p>modal</p>
-                    </Modal>
+                        setActive={openModalWindow}
+                        triggerName={triggerModal}
+                        callback={
+                            triggerModal === 'add'
+                                ? (name:string) => createNewPack(name)
+                                : () => {}
+                        }
+                    />
                 </>
             }
         </>
