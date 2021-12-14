@@ -5,7 +5,7 @@ import {useAppDispatch, useAppSelector} from "../../../../hook/redux";
 import {
     QueryParamsGetAllCardsType,
     SortType,
-    useCreateNewPackMutation,
+    useCreateNewPackMutation, useDeletePackMutation,
     useGetAllPacksQuery,
 
 } from "../../../m3-dal/cards_pack-api";
@@ -42,12 +42,20 @@ const selectOptions: Array<OptionsSelectType> = [
 ]
 export type ModalTriggerType = 'add' | 'delete';
 
+export type packInfoType = {
+    id: string,
+    name: string
+}
 export const PacksList = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedOptionId, setSelectedOptionId] = useState(selectOptions[0].id);
     const [triggerModal, setTriggerModal] = useState<ModalTriggerType>('add');
+    const [packInfo, setPackInfo] = useState<packInfoType>({
+        id: '',
+        name: ''
+    });
 
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
@@ -71,6 +79,7 @@ export const PacksList = () => {
     });
 
     const [createPack] = useCreateNewPackMutation();
+    const [deletePack] = useDeletePackMutation();
 
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
@@ -100,8 +109,12 @@ export const PacksList = () => {
         setQueryParams({...queryParams, min: values[0], max: values[1]})
     }, [queryParams]);
 
-    const openCloseModalWindow = useCallback((value: boolean, triggerName:ModalTriggerType) => {
+    const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
+                                              info?: packInfoType) => {
         dispatch(setIsOpenedModal(value));
+        if (triggerName === 'delete') {
+            info && setPackInfo({...info});
+        }
         setTriggerModal(triggerName);
     }, [dispatch]);
 
@@ -109,7 +122,12 @@ export const PacksList = () => {
     const createNewPack = useCallback((name: string) => {
         createPack({name});
         dispatch(setIsOpenedModal(false));
-    }, [createPack, dispatch])
+    }, [createPack, dispatch]);
+
+    const deletePackHandler = useCallback(() => {
+        deletePack({id: packInfo.id});
+        dispatch(setIsOpenedModal(false));
+    }, [dispatch, deletePack, packInfo])
 
     useEffect(() => {
 
@@ -135,6 +153,7 @@ export const PacksList = () => {
     if (!isAuth) {
         return <Navigate to={'/login'} replace/>
     }
+    console.log()
     return (
         <>
             {isLoading
@@ -167,8 +186,9 @@ export const PacksList = () => {
                                     callback={setPackName}
                                     addClass={s.input}
                                 />
-                                <button onClick={() => openCloseModalWindow(true, 'add')}
-                                        className={s.button}>Add new
+                                <button
+                                    onClick={() => openCloseModalWindow(true, 'add')}
+                                    className={s.button}>Add new
                                 </button>
                             </div>
                             <Table
@@ -206,7 +226,10 @@ export const PacksList = () => {
                                     setNewTitlePack={(name: string) => createNewPack(name)}
                                     openCloseModalWindow={openCloseModalWindow}
                                 />
-                                : <DeletePackModal/>
+                                : <DeletePackModal
+                                    packName={packInfo.name}
+                                    deletePack={deletePackHandler}
+                                />
                         }
                     </Modal>
                 </>

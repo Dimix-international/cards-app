@@ -43,10 +43,11 @@ export const cardsApi = createApi({
             }),
             invalidatesTags: ['Packs']
         }),
-        deletePack: build.mutation<ObjectPackType, number>({
-            query: (id) => ({
-                url: `cards/pack/${id}`,
+        deletePack: build.mutation<ObjectPackType, {id:string}>({
+            query: (arg) => ({
+                url: `cards/pack`,
                 method: 'DELETE',
+                params: arg
             }),
             invalidatesTags: ['Packs']
         }),
@@ -63,4 +64,8 @@ export const cardsApi = createApi({
     })
 })
 
-export const {useGetAllPacksQuery, useCreateNewPackMutation} = cardsApi;
+export const {
+    useGetAllPacksQuery,
+    useCreateNewPackMutation,
+    useDeletePackMutation,
+} = cardsApi;

@@ -4,15 +4,19 @@ import {COLUMNS} from "../column";
 import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
-import {ModalTriggerType} from "../PacksList";
+import {ModalTriggerType, packInfoType} from "../PacksList";
 
 type TableType = {
     data: Array<CardPackType>
     sortData: () => void
-    openModalWindow:(value: boolean, trigger: ModalTriggerType) => void
+    openModalWindow: (value: boolean, trigger: ModalTriggerType, packInfo?: packInfoType) => void
 }
 
-export const Table: React.FC<TableType> = ({data, sortData, openModalWindow}) => {
+export const Table: React.FC<TableType> = ({
+                                               data,
+                                               sortData,
+                                               openModalWindow
+                                           }) => {
 
     const columns = useMemo(() => COLUMNS, []);
     const userId = useAppSelector(state => state.loginization.user._id)
@@ -25,12 +29,19 @@ export const Table: React.FC<TableType> = ({data, sortData, openModalWindow}) =>
                 id: 'actions',
                 Header: 'Actions',
                 Cell: ({row}: any) => {
+
                     if (row.original.user_id === String(userId)) {
                         return (
                             <div className={'buttons'}>
                                 <button
                                     className={'button button_delete'}
-                                    onClick={() => openModalWindow(true, "delete")}
+                                    onClick={() => {
+                                        openModalWindow(true, "delete", {
+                                            id: row.original._id,
+                                            name: row.original.name
+                                        })
+                                    }
+                                    }
                                 >
                                     delete
                                 </button>
