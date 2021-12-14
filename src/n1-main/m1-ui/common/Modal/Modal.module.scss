@@ -20,9 +20,13 @@
   padding: 20px;
   border-radius: 10px;
   background-color: #fff;
-  width: 50vw;
+  width: 30%;
   transition: all 0.3s ease-in;
   transform: scale(0.5);
+
+  @media(max-width: 720px) {
+    width: 90%;
+  }
 }
 .content.active {
   transform: scale(1);

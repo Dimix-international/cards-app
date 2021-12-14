@@ -1,21 +1,18 @@
 import React, {MouseEvent} from "react";
 import s from './Modal.module.scss'
 import {ModalTriggerType} from "../../main/packsList/PacksList";
-import {AddNewPackModal} from "./AddNew/AddNewModal";
-import {DeletePackModal} from "./DeletePack/DeletePackModal";
 
 type ModalType = {
     isActive: boolean,
-    setActive: (value: boolean) => void
-    triggerName: ModalTriggerType
-    callback: (name: string) => void
+    setActive: (value: boolean, trigger: ModalTriggerType) => void
+    trigger: ModalTriggerType
 }
 export const Modal: React.FC<ModalType> = React.memo(props => {
 
-    const {isActive, setActive, triggerName, callback} = props;
+    const {isActive, setActive,trigger, children} = props;
 
     const closeModal = () => {
-        setActive(false)
+        setActive(false, trigger)
     }
     const clickContent = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
@@ -30,13 +27,7 @@ export const Modal: React.FC<ModalType> = React.memo(props => {
                 className={finallyClassContent}
                 onClick={clickContent}
             >
-                {
-                    triggerName === 'add'
-                        ? <AddNewPackModal
-                            setNewTitlePack={callback}
-                        />
-                        : <DeletePackModal/>
-                }
+                {children}
             </div>
         </div>
     )

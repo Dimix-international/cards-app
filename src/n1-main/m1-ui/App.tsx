@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import './App.css'
-import {Route, Routes, useNavigate} from "react-router-dom";
+import {Route, Routes, useNavigate, Navigate} from "react-router-dom";
 import {Login} from "../../n2-features/f1-auth/a1-login/Login";
 import {Register} from "../../n2-features/f1-auth/a2-register/Register";
 import {RecoverPassword} from "../../n2-features/f1-auth/a4-recovery-pass/RecoverPasswor";
@@ -54,7 +54,7 @@ export const App = () => {
             <Routes>
                 <Route path="/" element={<Layout
                     error={finallyError as FinallyErrorResponseType}/>}>
-                    <Route index element={<PacksList/>}/>
+                    <Route path="/" element={<Navigate to={'packs-list'}/>}/>
                     <Route path={'packs-list'} element={<PacksList/>}/>
                     <Route path={'profile'} element={<Profile/>}/>
                     <Route path={'login'} element={<Login/>}/>

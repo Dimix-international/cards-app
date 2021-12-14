@@ -4,14 +4,15 @@ import {COLUMNS} from "../column";
 import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
+import {ModalTriggerType} from "../PacksList";
 
 type TableType = {
     data: Array<CardPackType>
     sortData: () => void
-
+    openModalWindow:(value: boolean, trigger: ModalTriggerType) => void
 }
 
-export const Table: React.FC<TableType> = ({data, sortData}) => {
+export const Table: React.FC<TableType> = ({data, sortData, openModalWindow}) => {
 
     const columns = useMemo(() => COLUMNS, []);
     const userId = useAppSelector(state => state.loginization.user._id)
@@ -24,27 +25,37 @@ export const Table: React.FC<TableType> = ({data, sortData}) => {
                 id: 'actions',
                 Header: 'Actions',
                 Cell: ({row}: any) => {
-                    const myCard = data.find(card => Number(card._id) === userId);
-                    return (
-                        <div className={'buttons'}>
-                            {
-                                myCard && <>
-                                    <button
-                                        className={'button_delete'}
-                                    >
-                                        delete
-                                    </button>
-                                    <button>edit</button>
-                                </>
-                            }
-                            <button className={'button'} onClick={() => {
-                                console.log('ok')
-                            }
-                            }>
-                                Learn
-                            </button>
-                        </div>
-                    )
+                    if (row.original.user_id === String(userId)) {
+                        return (
+                            <div className={'buttons'}>
+                                <button
+                                    className={'button button_delete'}
+                                    onClick={() => openModalWindow(true, "delete")}
+                                >
+                                    delete
+                                </button>
+                                <button className={'button button_edit'}>edit
+                                </button>
+                                <button className={'button'} onClick={() => {
+                                    console.log('ok')
+                                }
+                                }>
+                                    Learn
+                                </button>
+                            </div>
+                        )
+                    } else {
+                        return (
+                            <div className={'buttons'}>
+                                <button className={'button'} onClick={() => {
+                                    console.log('ok')
+                                }
+                                }>
+                                    Learn
+                                </button>
+                            </div>
+                        )
+                    }
                 }
             }
         ])

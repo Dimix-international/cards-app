@@ -1,14 +1,14 @@
 import React from 'react';
 import s from './Tab.module.scss'
 import {Link, useMatch} from "react-router-dom";
-
+import PersonIcon from '@mui/icons-material/Person';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 type TabType = {
     name: string,
-    image:string
-    to:string
+    to: string
 }
-export const TabComponent:React.FC<TabType> = React.memo(({name, image, to}) => {
+export const TabComponent: React.FC<TabType> = React.memo(({name, to}) => {
 
     const match = useMatch({
         path: to, //главная страница
@@ -18,7 +18,11 @@ export const TabComponent:React.FC<TabType> = React.memo(({name, image, to}) => 
     const finallyClass = match ? `${s.tab} ${s.active} ` : `${s.tab}`
     return (
         <Link to={to} className={finallyClass}>
-            <img src={image} alt="image"/>
+            {
+                name === 'Packs list'
+                    ? <ListAltIcon/>
+                    : <PersonIcon/>
+            }
             <h2>{name}</h2>
         </Link>
     );

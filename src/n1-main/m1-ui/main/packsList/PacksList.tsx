@@ -18,6 +18,8 @@ import {RadioButton} from "../../common/RadioButtons/RadioButton";
 import {Range} from "./range/Range";
 import {setIsOpenedModal} from "../../../m2-bll/app-reducer";
 import {Modal} from "../../common/Modal/Modal";
+import {AddNewPackModal} from "./AddNew/AddNewModal";
+import {DeletePackModal} from "./DeletePack/DeletePackModal";
 
 
 type OptionsSelectType = {
@@ -45,7 +47,7 @@ export const PacksList = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedOptionId, setSelectedOptionId] = useState(selectOptions[0].id);
-    const[triggerModal, setTriggerModal] = useState<ModalTriggerType>('add');
+    const [triggerModal, setTriggerModal] = useState<ModalTriggerType>('add');
 
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
@@ -65,7 +67,7 @@ export const PacksList = () => {
     const {data: allCards, isLoading} = useGetAllPacksQuery({
         ...queryParams
     }, {
-        skip: !isAuth ,
+        skip: !isAuth,
     });
 
     const [createPack] = useCreateNewPackMutation();
@@ -81,32 +83,33 @@ export const PacksList = () => {
         setQueryParams({...queryParams, packName})
     }, [queryParams])
 
-    const setRadioButtonsValue = useCallback( (name:string) => {
-        if(name === 'my') {
+    const setRadioButtonsValue = useCallback((name: string) => {
+        if (name === 'my') {
             setQueryParams({...queryParams, user_id: String(userId)})
-        } else{
+        } else {
             setQueryParams({...queryParams, user_id: null})
         }
-    },[queryParams, userId]);
+    }, [queryParams, userId]);
 
     const sortData = useCallback(() => {
-        const sort: SortType =  queryParams.sortPacks === '0' ? '1' : '0';
-        setQueryParams({...queryParams, sortPacks: sort })
-    },[queryParams]);
+        const sort: SortType = queryParams.sortPacks === '0' ? '1' : '0';
+        setQueryParams({...queryParams, sortPacks: sort})
+    }, [queryParams]);
 
     const setMinMaxRange = useCallback((values: Array<number>) => {
-        setQueryParams({...queryParams, min: values[0],  max: values[1]})
-    },[queryParams]);
+        setQueryParams({...queryParams, min: values[0], max: values[1]})
+    }, [queryParams]);
 
-    const openModalWindow = useCallback( (value:boolean) => {
+    const openCloseModalWindow = useCallback((value: boolean, triggerName:ModalTriggerType) => {
         dispatch(setIsOpenedModal(value));
-        setTriggerModal('add');
-    },[dispatch, isOpenModal])
+        setTriggerModal(triggerName);
+    }, [dispatch]);
 
-    const createNewPack = useCallback((name:string) => {
+
+    const createNewPack = useCallback((name: string) => {
         createPack({name});
         dispatch(setIsOpenedModal(false));
-    },[createPack, dispatch])
+    }, [createPack, dispatch])
 
     useEffect(() => {
 
@@ -115,19 +118,19 @@ export const PacksList = () => {
 
     useEffect(() => {
         const el = selectOptions.find(option => option.id === selectedOptionId);
-        if(el) {
+        if (el) {
             setQueryParams({...queryParams, pageCount: Number(el.value)})
         }
-    },[selectedOptionId])
+    }, [selectedOptionId])
 
     //блокируем скролл всей страницы, когда открыто модальное окно
-    useEffect(() => {
-        if (isOpenModal) {
-            document.body.classList.add(s.body_lock)
-        } else {
-            document.body.className = ''
-        }
-    }, [isOpenModal])
+    /*    useEffect(() => {
+            if (isOpenModal) {
+                document.body.classList.add(s.body_lock)
+            } else {
+                document.body.className = ''
+            }
+        }, [isOpenModal])*/
 
     if (!isAuth) {
         return <Navigate to={'/login'} replace/>
@@ -164,11 +167,15 @@ export const PacksList = () => {
                                     callback={setPackName}
                                     addClass={s.input}
                                 />
-                                <button onClick={() => openModalWindow(true)}
+                                <button onClick={() => openCloseModalWindow(true, 'add')}
                                         className={s.button}>Add new
                                 </button>
                             </div>
-                            <Table data={data} sortData={sortData}/>
+                            <Table
+                                data={data}
+                                sortData={sortData}
+                                openModalWindow={openCloseModalWindow}
+                            />
                             <div className={s.selectCard}>
                                 <Pagination
                                     totalCards={allCards?.cardPacksTotalCount || 0}
@@ -190,14 +197,18 @@ export const PacksList = () => {
                     </div>
                     <Modal
                         isActive={isOpenModal}
-                        setActive={openModalWindow}
-                        triggerName={triggerModal}
-                        callback={
+                        setActive={openCloseModalWindow}
+                        trigger={triggerModal}
+                    >
+                        {
                             triggerModal === 'add'
-                                ? (name:string) => createNewPack(name)
-                                : () => {}
+                                ? <AddNewPackModal
+                                    setNewTitlePack={(name: string) => createNewPack(name)}
+                                    openCloseModalWindow={openCloseModalWindow}
+                                />
+                                : <DeletePackModal/>
                         }
-                    />
+                    </Modal>
                 </>
             }
         </>

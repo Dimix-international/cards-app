@@ -35,7 +35,7 @@ table td {
 
 .buttons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     column-gap: 20px;
 }
@@ -58,6 +58,9 @@ table td {
 }
 .button_delete {
     background-color: darkred;
+    &:hover{
+        background-color: red;
+    }
 }
 .input {
     border: 1px solid #000;
