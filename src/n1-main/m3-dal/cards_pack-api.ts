@@ -13,37 +13,60 @@ export type QueryParamsGetAllCardsType = {
 }
 export type ObjectPackType = {
     name: string,
-    path:string,
+    path: string,
     grade: number,
-    shots:number,
+    shots: number,
     rating: number,
     deckCover: string,
     private: boolean,
     type: string
 }
+export type CreatePackType = {
+    cardsCount: number
+    created: string
+    grade: number
+    more_id: string
+    name: string
+    path: string
+    private: boolean
+    rating: number
+    shots: number
+    type: string
+    updated: string
+    user_id: string
+    user_name: string
+    __v: number
+    _id: string
+    token: string
+    tokenDeathTime: number
+}
+
 
 export const cardsApi = createApi({
-    reducerPath:'cardsApi',
-    baseQuery:axiosBaseQuery({baseUrl:'http://localhost:7542/2.0/'}),
+    reducerPath: 'cardsApi',
+    baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
     tagTypes: ['Packs'],
-    endpoints:(build) => ({
+    endpoints: (build) => ({
         getAllPacks: build.query<AllCardsType, QueryParamsGetAllCardsType>({
-            query:(arg) => ({
+            query: (arg) => ({
                 url: 'cards/pack',
                 params: {...arg},
                 method: 'GET',
             }),
             providesTags: ['Packs'],
         }),
-        createNewPack: build.mutation<ObjectPackType, {name: string}>({
-            query: ({name}) => ({
+        createNewPack: build.mutation<CreatePackType, { name: string }>({
+            query: (arg) => ({
                 url: 'cards/pack',
                 method: 'POST',
-                data: {cardsPack: {name}},
+                data: {cardsPack: arg},
+            }),
+            transformResponse: (result: { newCardsPack: CreatePackType }) => ({
+                ...result.newCardsPack
             }),
             invalidatesTags: ['Packs']
         }),
-        deletePack: build.mutation<ObjectPackType, {id:string}>({
+        deletePack: build.mutation<ObjectPackType, { id: string }>({
             query: (arg) => ({
                 url: `cards/pack`,
                 method: 'DELETE',
@@ -51,13 +74,13 @@ export const cardsApi = createApi({
             }),
             invalidatesTags: ['Packs']
         }),
-        updatePack:build.mutation<ObjectPackType, {_id: string, name:string}>({
+        updatePack: build.mutation<ObjectPackType, { _id: string, name: string }>({
             query: ({_id, ...rest}) => ({
                 url: `cards/pack/${_id}`,
                 method: 'POST',
                 data: {_id, rest},
             }),
-            invalidatesTags: (result, args:any) => [
+            invalidatesTags: (result, args: any) => [
                 {type: 'Packs', id: args._id}
             ]
         })

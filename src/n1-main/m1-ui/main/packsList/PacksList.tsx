@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Navigate, useSearchParams} from "react-router-dom";
+import {Navigate, useNavigate, useSearchParams} from "react-router-dom";
 import {Table} from "./table/Table";
 import {useAppDispatch, useAppSelector} from "../../../../hook/redux";
 import {
@@ -21,6 +21,7 @@ import {Modal} from "../../common/Modal/Modal";
 import {AddNewPackModal} from "./AddNew/AddNewModal";
 import {DeletePackModal} from "./DeletePack/DeletePackModal";
 import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
+import {AxiosResponse} from "axios";
 
 
 type OptionsSelectType = {
@@ -63,6 +64,8 @@ export const PacksList = () => {
     const isOpenModal = useAppSelector(state => state.app.isOpenedModal);
     const dispatch = useAppDispatch();
 
+    const navigate = useNavigate();
+
     const [queryParams, setQueryParams] = useState<QueryParamsGetAllCardsType>({
         packName: null,
         min: 0,
@@ -76,8 +79,6 @@ export const PacksList = () => {
     const {
         data: allCards,
         isLoading,
-        isFetching:isFetchingGetAllPacks,
-        isSuccess: isSuccessGettingPacks,
         error: errorGettingPacks
     } = useGetAllPacksQuery({
         ...queryParams
@@ -128,34 +129,27 @@ export const PacksList = () => {
 
     const createNewPack = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
-        try{
-            await createPack({name});
+        try {
+            const response = await createPack({name});
+            dispatch(setIsOpenedModal(false));
+            dispatch(setAppStatus('succeeded'));
+
+            navigate(`/packs-list/pack/id=${(response as AxiosResponse).data._id} `, {replace: true})
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
-    }, [createPack, dispatch]);
+    }, [createPack, dispatch, navigate]);
 
     const deletePackHandler = useCallback(async () => {
         dispatch(setAppStatus('loading'));
-        try{
+        try {
             await deletePack({id: packInfo.id});
+            dispatch(setIsOpenedModal(false));
+            dispatch(setAppStatus('succeeded'));
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
     }, [dispatch, deletePack, packInfo])
-
-    //на добавление или удаление пакета, ставим крутилку пока идет перезапрос на все пакеты
-    useEffect(() => {
-        if(!isFetchingGetAllPacks ) {
-            if(isSuccessGettingPacks) {
-                dispatch(setIsOpenedModal(false));
-                dispatch(setAppStatus('succeeded'));
-            } else{
-                dispatch(setAppStatus('failed'));
-            }
-
-        }
-    },[isFetchingGetAllPacks, dispatch, isSuccessGettingPacks]);
 
     //установка query параметров в url
     useEffect(() => {
@@ -183,7 +177,7 @@ export const PacksList = () => {
     if (!isAuth) {
         return <Navigate to={'/login'} replace/>
     }
-    console.log(errorGettingPacks)
+
     return (
         <>
             {isLoading
@@ -195,11 +189,13 @@ export const PacksList = () => {
                             <div className={s.radioButtons}>
                                 <RadioButton
                                     activeBtn={queryParams.user_id !== null}
-                                    name={'my'} text={'My'}
+                                    name={'cardsRadio'} text={'My'}
+                                    value={'my'}
                                     callback={(name: string) => setRadioButtonsValue(name)}/>
                                 <RadioButton
                                     activeBtn={queryParams.user_id === null}
-                                    name={'all'} text={'All'}
+                                    value={'all'}
+                                    name={'cardsRadio'} text={'All'}
                                     callback={(name: string) => setRadioButtonsValue(name)}/>
                             </div>
                             <Range
