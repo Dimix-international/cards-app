@@ -16,10 +16,11 @@ import {InputSearch} from "./searchInput/SearchInput";
 import {Select} from "../../common/Select/Select";
 import {RadioButton} from "../../common/RadioButtons/RadioButton";
 import {Range} from "./range/Range";
-import {setIsOpenedModal} from "../../../m2-bll/app-reducer";
+import {setAppStatus, setIsOpenedModal} from "../../../m2-bll/app-reducer";
 import {Modal} from "../../common/Modal/Modal";
 import {AddNewPackModal} from "./AddNew/AddNewModal";
 import {DeletePackModal} from "./DeletePack/DeletePackModal";
+import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 
 
 type OptionsSelectType = {
@@ -72,7 +73,13 @@ export const PacksList = () => {
         user_id: null
     });
 
-    const {data: allCards, isLoading} = useGetAllPacksQuery({
+    const {
+        data: allCards,
+        isLoading,
+        isFetching:isFetchingGetAllPacks,
+        isSuccess: isSuccessGettingPacks,
+        error: errorGettingPacks
+    } = useGetAllPacksQuery({
         ...queryParams
     }, {
         skip: !isAuth,
@@ -119,27 +126,50 @@ export const PacksList = () => {
     }, [dispatch]);
 
 
-    const createNewPack = useCallback((name: string) => {
-        createPack({name});
-        dispatch(setIsOpenedModal(false));
+    const createNewPack = useCallback(async (name: string) => {
+        dispatch(setAppStatus('loading'));
+        try{
+            await createPack({name});
+        } catch (e) {
+            dispatch(setAppStatus('failed'));
+        }
     }, [createPack, dispatch]);
 
-    const deletePackHandler = useCallback(() => {
-        deletePack({id: packInfo.id});
-        dispatch(setIsOpenedModal(false));
+    const deletePackHandler = useCallback(async () => {
+        dispatch(setAppStatus('loading'));
+        try{
+            await deletePack({id: packInfo.id});
+        } catch (e) {
+            dispatch(setAppStatus('failed'));
+        }
     }, [dispatch, deletePack, packInfo])
 
+    //на добавление или удаление пакета, ставим крутилку пока идет перезапрос на все пакеты
+    useEffect(() => {
+        if(!isFetchingGetAllPacks ) {
+            if(isSuccessGettingPacks) {
+                dispatch(setIsOpenedModal(false));
+                dispatch(setAppStatus('succeeded'));
+            } else{
+                dispatch(setAppStatus('failed'));
+            }
+
+        }
+    },[isFetchingGetAllPacks, dispatch, isSuccessGettingPacks]);
+
+    //установка query параметров в url
     useEffect(() => {
 
         setSearchParams({...Object.entries(searchParams), ...queryParams})
-    }, [allCards, queryParams, searchParams, setSearchParams])
+    }, [allCards, queryParams, searchParams, setSearchParams]);
 
+    //установка значения select
     useEffect(() => {
         const el = selectOptions.find(option => option.id === selectedOptionId);
         if (el) {
             setQueryParams({...queryParams, pageCount: Number(el.value)})
         }
-    }, [selectedOptionId])
+    }, [selectedOptionId]);
 
     //блокируем скролл всей страницы, когда открыто модальное окно
     /*    useEffect(() => {
@@ -153,7 +183,7 @@ export const PacksList = () => {
     if (!isAuth) {
         return <Navigate to={'/login'} replace/>
     }
-    console.log()
+    console.log(errorGettingPacks)
     return (
         <>
             {isLoading
@@ -229,7 +259,15 @@ export const PacksList = () => {
                                 : <DeletePackModal
                                     packName={packInfo.name}
                                     deletePack={deletePackHandler}
+                                    openCloseModalWindow={openCloseModalWindow}
                                 />
+                        }
+                        {
+                            errorGettingPacks && <div className={'error'}>
+                                {
+                                    (errorGettingPacks as FinallyErrorResponseType)?.data?.error || 'Ошибка соединения'
+                                }
+                            </div>
                         }
                     </Modal>
                 </>

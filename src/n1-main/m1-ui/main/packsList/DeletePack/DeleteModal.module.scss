@@ -1,0 +1,16 @@
+.delete{
+  background-color: darkred;
+  box-shadow: 0 5px 20px -1px rgba(34, 60, 80, 0.2);
+  transition: all 0.4s;
+
+  &:hover{
+    background-color: red;
+  }
+}
+.text {
+  font-weight: 700;
+  color: #000;
+}
+.body {
+  margin-bottom: 20px;
+}
