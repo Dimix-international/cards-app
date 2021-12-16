@@ -8,7 +8,7 @@ import {
     useCreateNewPackMutation, useDeletePackMutation,
     useGetAllPacksQuery,
 
-} from "../../../m3-dal/cards_pack-api";
+} from "../../../m3-dal/pack-list-api";
 import {Loader} from "../../common/Loader/Loader";
 import s from './packList.module.scss'
 import {Pagination} from "../../common/Pagination/Pagination";

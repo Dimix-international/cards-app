@@ -57,7 +57,7 @@ export const App = () => {
                     error={finallyError as FinallyErrorResponseType}/>}>
                     <Route path="/" element={<Navigate to={'packs-list'}/>}/>
                     <Route path={'packs-list'} element={<PacksList/>}/>
-                    <Route path={'packs-list/pack/:id'} element={<Pack/>}/>
+                    <Route path={'cards/card'} element={<Pack/>}/>
                     <Route path={'profile'} element={<Profile/>}/>
                     <Route path={'login'} element={<Login/>}/>
                     <Route path={'registration'} element={<Register/>}/>

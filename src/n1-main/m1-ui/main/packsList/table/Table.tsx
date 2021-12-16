@@ -5,7 +5,7 @@ import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
 import {ModalTriggerType, packInfoType} from "../PacksList";
-
+import {Link, Navigate} from "react-router-dom";
 type TableType = {
     data: Array<CardPackType>
     sortData: () => void
@@ -29,7 +29,6 @@ export const Table: React.FC<TableType> = ({
                 id: 'actions',
                 Header: 'Actions',
                 Cell: ({row}: any) => {
-
                     if (row.original.user_id === String(userId)) {
                         return (
                             <div className={'buttons'}>
@@ -47,23 +46,17 @@ export const Table: React.FC<TableType> = ({
                                 </button>
                                 <button className={'button button_edit'}>edit
                                 </button>
-                                <button className={'button'} onClick={() => {
-                                    console.log('ok')
-                                }
-                                }>
+                                <Link to={`/cards/card?cardsPack_id=${row.original._id}`} className={'button'}>
                                     Learn
-                                </button>
+                                </Link>
                             </div>
                         )
                     } else {
                         return (
                             <div className={'buttons'}>
-                                <button className={'button'} onClick={() => {
-                                    console.log('ok')
-                                }
-                                }>
+                                <Link to={`/cards/card?cardsPack_id=${row.original._id}`} className={'button'}>
                                     Learn
-                                </button>
+                                </Link>
                             </div>
                         )
                     }

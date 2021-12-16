@@ -42,8 +42,8 @@ export type CreatePackType = {
 }
 
 
-export const cardsApi = createApi({
-    reducerPath: 'cardsApi',
+export const packListApi = createApi({
+    reducerPath: 'packListApi',
     baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
     tagTypes: ['Packs'],
     endpoints: (build) => ({
@@ -91,4 +91,4 @@ export const {
     useGetAllPacksQuery,
     useCreateNewPackMutation,
     useDeletePackMutation,
-} = cardsApi;
+} = packListApi;
