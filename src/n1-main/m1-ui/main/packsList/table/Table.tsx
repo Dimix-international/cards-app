@@ -1,11 +1,12 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, MouseEvent} from 'react';
 import {useTable} from "react-table";
 import {COLUMNS} from "../column";
 import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
 import {ModalTriggerType, packInfoType} from "../PacksList";
-import {Link, Navigate} from "react-router-dom";
+import {Link} from "react-router-dom";
+
 type TableType = {
     data: Array<CardPackType>
     sortData: () => void
@@ -19,7 +20,8 @@ export const Table: React.FC<TableType> = ({
                                            }) => {
 
     const columns = useMemo(() => COLUMNS, []);
-    const userId = useAppSelector(state => state.loginization.user._id)
+    const userId = useAppSelector(state => state.loginization.user._id);
+
 
     const tableHooks = (hooks: any) => {
         //добавим свою колонку
@@ -34,7 +36,8 @@ export const Table: React.FC<TableType> = ({
                             <div className={'buttons'}>
                                 <button
                                     className={'button button_delete'}
-                                    onClick={() => {
+                                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                        e.stopPropagation();
                                         openModalWindow(true, "delete", {
                                             id: row.original._id,
                                             name: row.original.name
@@ -44,19 +47,34 @@ export const Table: React.FC<TableType> = ({
                                 >
                                     delete
                                 </button>
-                                <button className={'button button_edit'}>edit
+                                <button className={'button button_edit'}
+                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                            e.stopPropagation();
+                                            console.log('edit')
+                                        }
+                                        }>edit
                                 </button>
-                                <Link to={`/cards/card?cardsPack_id=${row.original._id}`} className={'button'}>
+                                <button className={'button'}
+                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                            e.stopPropagation();
+                                            console.log('learn')
+                                        }
+                                        }>
                                     Learn
-                                </Link>
+                                </button>
                             </div>
                         )
                     } else {
                         return (
                             <div className={'buttons'}>
-                                <Link to={`/cards/card?cardsPack_id=${row.original._id}`} className={'button'}>
+                                <button className={'button'}
+                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                            e.stopPropagation();
+                                            console.log('learn')
+                                        }
+                                        }>
                                     Learn
-                                </Link>
+                                </button>
                             </div>
                         )
                     }
@@ -119,6 +137,21 @@ export const Table: React.FC<TableType> = ({
                             <tr {...row.getRowProps()}>
                                 {
                                     row.cells.map(cell => {
+                                        if (cell.column.Header === 'Name') {
+                                            return <td {...cell.getCellProps()}>
+                                                <Link
+                                                    className={'tdLink'}
+                                                    to={
+                                                        `/packs-list/cards/card?cardsPack_id=${row.original._id}`
+                                                    }
+                                                    state={{
+                                                        packName:cell.value
+                                                    }}
+                                                >
+                                                    {cell.render('Cell')}
+                                                </Link>
+                                            </td>
+                                        }
                                         return <td {...cell.getCellProps()}>
                                             {cell.render('Cell')}
                                         </td>

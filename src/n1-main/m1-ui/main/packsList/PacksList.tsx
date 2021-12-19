@@ -3,11 +3,10 @@ import {Navigate, useNavigate, useSearchParams} from "react-router-dom";
 import {Table} from "./table/Table";
 import {useAppDispatch, useAppSelector} from "../../../../hook/redux";
 import {
-    QueryParamsGetAllCardsType,
     SortType,
-    useCreateNewPackMutation, useDeletePackMutation,
+    useCreateNewPackMutation,
+    useDeletePackMutation,
     useGetAllPacksQuery,
-
 } from "../../../m3-dal/pack-list-api";
 import {Loader} from "../../common/Loader/Loader";
 import s from './packList.module.scss'
@@ -22,6 +21,7 @@ import {AddNewPackModal} from "./AddNew/AddNewModal";
 import {DeletePackModal} from "./DeletePack/DeletePackModal";
 import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
+import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
 
 
 type OptionsSelectType = {
@@ -62,20 +62,11 @@ export const PacksList = () => {
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
     const isOpenModal = useAppSelector(state => state.app.isOpenedModal);
+    const queryParams = useAppSelector(state => state.packList);
+
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
-
-    const [queryParams, setQueryParams] = useState<QueryParamsGetAllCardsType>({
-        packName: null,
-        min: 0,
-        max: 50,
-        sortPacks: '0',
-        page: 1,
-        pageCount: 10,
-        user_id: null
-    });
-
     const {
         data: allCards,
         isLoading,
@@ -93,29 +84,29 @@ export const PacksList = () => {
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
     const setCurrentPageHandler = useCallback((page: number) => {
-        setQueryParams({...queryParams, page})
-    }, [queryParams]);
+        dispatch(setPackListParams({...queryParams, page}))
+    }, [queryParams, dispatch]);
 
-    const setPackName = useCallback((packName: string) => {
-        setQueryParams({...queryParams, packName})
-    }, [queryParams])
+    const searchPackName = useCallback((packName: string) => {
+        dispatch(setPackListParams({...queryParams, packName}))
+    }, [queryParams, dispatch])
 
     const setRadioButtonsValue = useCallback((name: string) => {
         if (name === 'my') {
-            setQueryParams({...queryParams, user_id: String(userId)})
+            dispatch(setPackListParams({...queryParams, user_id: String(userId)}))
         } else {
-            setQueryParams({...queryParams, user_id: null})
+            dispatch(setPackListParams({...queryParams, user_id: null}))
         }
-    }, [queryParams, userId]);
+    }, [queryParams, userId, dispatch]);
 
     const sortData = useCallback(() => {
         const sort: SortType = queryParams.sortPacks === '0' ? '1' : '0';
-        setQueryParams({...queryParams, sortPacks: sort})
-    }, [queryParams]);
+        dispatch(setPackListParams({...queryParams, sortPacks: sort}))
+    }, [queryParams, dispatch]);
 
     const setMinMaxRange = useCallback((values: Array<number>) => {
-        setQueryParams({...queryParams, min: values[0], max: values[1]})
-    }, [queryParams]);
+        dispatch(setPackListParams({...queryParams, min: values[0], max: values[1]}))
+    }, [queryParams, dispatch]);
 
     const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
                                               info?: packInfoType) => {
@@ -134,11 +125,13 @@ export const PacksList = () => {
             dispatch(setIsOpenedModal(false));
             dispatch(setAppStatus('succeeded'));
 
-            navigate(`/packs-list/pack/id=${(response as AxiosResponse).data._id} `, {replace: true})
+            navigate(`/packs-list/cards/card?cardsPack_id=${(response as AxiosResponse).data._id} `,
+                {replace: true, state: {packName: packInfo.name}}
+                )
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
-    }, [createPack, dispatch, navigate]);
+    }, [createPack, dispatch, navigate, packInfo.name]);
 
     const deletePackHandler = useCallback(async () => {
         dispatch(setAppStatus('loading'));
@@ -161,9 +154,9 @@ export const PacksList = () => {
     useEffect(() => {
         const el = selectOptions.find(option => option.id === selectedOptionId);
         if (el) {
-            setQueryParams({...queryParams, pageCount: Number(el.value)})
+            dispatch(setPackListParams({...queryParams, pageCount: Number(el.value)}))
         }
-    }, [selectedOptionId]);
+    }, [selectedOptionId, dispatch]);
 
     //блокируем скролл всей страницы, когда открыто модальное окно
     /*    useEffect(() => {
@@ -209,7 +202,7 @@ export const PacksList = () => {
                             <div className={s.search}>
                                 <InputSearch
                                     valueSearch={queryParams.packName || ''}
-                                    callback={setPackName}
+                                    callback={searchPackName}
                                     addClass={s.input}
                                 />
                                 <button

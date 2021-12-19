@@ -11,7 +11,9 @@ table {
 table tr:nth-child(even) {
     background-color: rgba(227, 226, 226, 0.6);
 }
-
+.tdLink {
+    color: inherit;
+}
 /*table tr:hover {background-color: #eeecec;}*/
 
 table th {

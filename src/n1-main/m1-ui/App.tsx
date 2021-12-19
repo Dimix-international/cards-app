@@ -18,7 +18,7 @@ import {Loader} from "./common/Loader/Loader";
 import {useAppDispatch} from "../../hook/redux";
 import {setAppIsAuth} from "../m2-bll/app-reducer";
 import {setUser} from "../m2-bll/loginization-reducer";
-import {Pack} from "./main/packsList/Pack/Pack";
+import {CardsOfPack} from "./main/packsList/Pack/CardsOfPack";
 
 
 export const App = () => {
@@ -57,7 +57,7 @@ export const App = () => {
                     error={finallyError as FinallyErrorResponseType}/>}>
                     <Route path="/" element={<Navigate to={'packs-list'}/>}/>
                     <Route path={'packs-list'} element={<PacksList/>}/>
-                    <Route path={'cards/card'} element={<Pack/>}/>
+                    <Route path={'packs-list/cards/card'} element={<CardsOfPack/>}/>
                     <Route path={'profile'} element={<Profile/>}/>
                     <Route path={'login'} element={<Login/>}/>
                     <Route path={'registration'} element={<Register/>}/>

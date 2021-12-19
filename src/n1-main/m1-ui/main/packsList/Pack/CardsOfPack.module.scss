@@ -1,0 +1,39 @@
+.container {
+  min-width: 1030px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 25px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  min-height: 400px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  color:#0a0a65;
+}
+.arrow {
+  font-size: 3rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+
+  &:hover{
+    color: #1010d4 !important;
+    transform: translateX(-5px) !important;
+  }
+}
+.title {
+  font-size: 3rem;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+.emptyPackText {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: grey;
+}
