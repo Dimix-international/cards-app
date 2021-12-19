@@ -16,8 +16,6 @@ export const TableCard: React.FC<TableType> = ({
                                            }) => {
 
     const columns = useMemo(() => COLUMNS_CARD, []);
-    const userId = useAppSelector(state => state.loginization.user._id);
-
 
     const {
         getTableProps,

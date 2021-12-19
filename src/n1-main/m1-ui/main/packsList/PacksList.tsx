@@ -93,19 +93,26 @@ export const PacksList = () => {
 
     const setRadioButtonsValue = useCallback((name: string) => {
         if (name === 'my') {
-            dispatch(setPackListParams({...queryParams, user_id: String(userId)}))
+            dispatch(setPackListParams({
+                ...queryParams,
+                user_id: String(userId)
+            }))
         } else {
             dispatch(setPackListParams({...queryParams, user_id: null}))
         }
     }, [queryParams, userId, dispatch]);
 
     const sortData = useCallback(() => {
-        const sort: SortType = queryParams.sortPacks === '0' ? '1' : '0';
+        const sort: SortType = queryParams.sortPacks === '0updated' ? '1updated' : '0updated';
         dispatch(setPackListParams({...queryParams, sortPacks: sort}))
     }, [queryParams, dispatch]);
 
     const setMinMaxRange = useCallback((values: Array<number>) => {
-        dispatch(setPackListParams({...queryParams, min: values[0], max: values[1]}))
+        dispatch(setPackListParams({
+            ...queryParams,
+            min: values[0],
+            max: values[1]
+        }))
     }, [queryParams, dispatch]);
 
     const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
@@ -126,8 +133,14 @@ export const PacksList = () => {
             dispatch(setAppStatus('succeeded'));
 
             navigate(`/packs-list/cards/card?cardsPack_id=${(response as AxiosResponse).data._id} `,
-                {replace: true, state: {packName: packInfo.name}}
-                )
+                {
+                    replace: true,
+                    state: {
+                        packName: packInfo.name,
+                        userIdPack: (response as AxiosResponse).data.user_id
+                    }
+                }
+            )
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
@@ -154,7 +167,10 @@ export const PacksList = () => {
     useEffect(() => {
         const el = selectOptions.find(option => option.id === selectedOptionId);
         if (el) {
-            dispatch(setPackListParams({...queryParams, pageCount: Number(el.value)}))
+            dispatch(setPackListParams({
+                ...queryParams,
+                pageCount: Number(el.value)
+            }))
         }
     }, [selectedOptionId, dispatch]);
 
@@ -184,12 +200,12 @@ export const PacksList = () => {
                                     activeBtn={queryParams.user_id !== null}
                                     name={'cardsRadio'} text={'My'}
                                     value={'my'}
-                                    callback={(name: string) => setRadioButtonsValue(name)}/>
+                                    callback={setRadioButtonsValue}/>
                                 <RadioButton
                                     activeBtn={queryParams.user_id === null}
                                     value={'all'}
                                     name={'cardsRadio'} text={'All'}
-                                    callback={(name: string) => setRadioButtonsValue(name)}/>
+                                    callback={setRadioButtonsValue}/>
                             </div>
                             <Range
                                 minValue={queryParams.min || 0}
@@ -207,13 +223,15 @@ export const PacksList = () => {
                                 />
                                 <button
                                     onClick={() => openCloseModalWindow(true, 'add')}
-                                    className={s.button}>Add new
+                                    className={s.button}>
+                                    Add new
                                 </button>
                             </div>
                             <Table
                                 data={data}
                                 sortData={sortData}
                                 openModalWindow={openCloseModalWindow}
+                                updateSort={queryParams.sortPacks}
                             />
                             <div className={s.selectCard}>
                                 <Pagination
@@ -227,7 +245,7 @@ export const PacksList = () => {
                                     <Select
                                         value={selectedOptionId}
                                         tasks={selectOptions}
-                                        setValue={(id: string) => setSelectedOptionId(id)}
+                                        setValue={setSelectedOptionId}
                                     />
                                     <span>Cards per Page</span>
                                 </div>
@@ -242,7 +260,7 @@ export const PacksList = () => {
                         {
                             triggerModal === 'add'
                                 ? <AddNewPackModal
-                                    setNewTitlePack={(name: string) => createNewPack(name)}
+                                    setNewTitlePack={createNewPack}
                                     openCloseModalWindow={openCloseModalWindow}
                                 />
                                 : <DeletePackModal

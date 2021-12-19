@@ -8,7 +8,7 @@ const slice = createSlice({
         packName: null,
         min: 0,
         max: 50,
-        sortPacks: '0',
+        sortPacks: '0updated',
         page: 1,
         pageCount: 10,
         user_id: null

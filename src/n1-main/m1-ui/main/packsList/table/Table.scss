@@ -87,3 +87,6 @@ table td {
         transition: all 0.2s;
     }
 }
+.sort.back:after {
+    transform: rotate(180deg);
+}

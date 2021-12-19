@@ -6,22 +6,24 @@ import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
 import {ModalTriggerType, packInfoType} from "../PacksList";
 import {Link} from "react-router-dom";
+import {SortType} from "../../../../m3-dal/pack-list-api";
 
 type TableType = {
     data: Array<CardPackType>
     sortData: () => void
     openModalWindow: (value: boolean, trigger: ModalTriggerType, packInfo?: packInfoType) => void
+    updateSort:SortType | undefined
 }
 
 export const Table: React.FC<TableType> = ({
                                                data,
                                                sortData,
-                                               openModalWindow
+                                               openModalWindow,
+                                               updateSort
                                            }) => {
 
     const columns = useMemo(() => COLUMNS, []);
     const userId = useAppSelector(state => state.loginization.user._id);
-
 
     const tableHooks = (hooks: any) => {
         //добавим свою колонку
@@ -108,7 +110,11 @@ export const Table: React.FC<TableType> = ({
                                     if (column.Header === 'Last Updated') {
                                         return (
                                             <th
-                                                className={'sort'}
+                                                /*className={'sort'}*/
+                                                className={updateSort === '0updated'
+                                                    ? 'sort'
+                                                    : 'sort back'
+                                                }
                                                 {...column.getHeaderProps()}
                                                 onClick={sortData}
                                             >
@@ -145,7 +151,8 @@ export const Table: React.FC<TableType> = ({
                                                         `/packs-list/cards/card?cardsPack_id=${row.original._id}`
                                                     }
                                                     state={{
-                                                        packName:cell.value
+                                                        packName:cell.value,
+                                                        userIdPack:row.original.user_id
                                                     }}
                                                 >
                                                     {cell.render('Cell')}
