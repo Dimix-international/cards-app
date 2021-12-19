@@ -84,6 +84,7 @@ export const Table: React.FC<TableType> = ({
             }
         ])
     }
+
     const {
         getTableProps,
         getTableBodyProps,

@@ -24,7 +24,7 @@ import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
 
 
-type OptionsSelectType = {
+export type OptionsSelectType = {
     id: string,
     value: string
 }
@@ -191,93 +191,101 @@ export const PacksList = () => {
         <>
             {isLoading
                 ? <Loader/>
-                : <>
-                    <div className={s.packList}>
-                        <div className={s.panelCards}>
-                            <h3 className={s.title}>Show pack cards</h3>
-                            <div className={s.radioButtons}>
-                                <RadioButton
-                                    activeBtn={queryParams.user_id !== null}
-                                    name={'cardsRadio'} text={'My'}
-                                    value={'my'}
-                                    callback={setRadioButtonsValue}/>
-                                <RadioButton
-                                    activeBtn={queryParams.user_id === null}
-                                    value={'all'}
-                                    name={'cardsRadio'} text={'All'}
-                                    callback={setRadioButtonsValue}/>
-                            </div>
-                            <Range
-                                minValue={queryParams.min || 0}
-                                maxValue={queryParams.max || 100}
-                                setMinMaxRange={setMinMaxRange}
-                            />
-                        </div>
-                        <div className={s.bodyCards}>
-                            <h2 className={s.title}>Packs List</h2>
-                            <div className={s.search}>
-                                <InputSearch
-                                    valueSearch={queryParams.packName || ''}
-                                    callback={searchPackName}
-                                    addClass={s.input}
+                :
+
+                errorGettingPacks ? <div className={'error'}>
+                        {
+                            (errorGettingPacks as FinallyErrorResponseType)?.data?.error || 'Ошибка соединения'
+                        }
+                    </div>
+                    :
+                    <>
+                        <div className={s.packList}>
+                            <div className={s.panelCards}>
+                                <h3 className={s.title}>Show pack cards</h3>
+                                <div className={s.radioButtons}>
+                                    <RadioButton
+                                        activeBtn={queryParams.user_id !== null}
+                                        name={'cardsRadio'} text={'My'}
+                                        value={'my'}
+                                        callback={setRadioButtonsValue}/>
+                                    <RadioButton
+                                        activeBtn={queryParams.user_id === null}
+                                        value={'all'}
+                                        name={'cardsRadio'} text={'All'}
+                                        callback={setRadioButtonsValue}/>
+                                </div>
+                                <Range
+                                    minValue={queryParams.min || 0}
+                                    maxValue={queryParams.max || 100}
+                                    setMinMaxRange={setMinMaxRange}
                                 />
-                                <button
-                                    onClick={() => openCloseModalWindow(true, 'add')}
-                                    className={s.button}>
-                                    Add new
-                                </button>
                             </div>
-                            <Table
-                                data={data}
-                                sortData={sortData}
-                                openModalWindow={openCloseModalWindow}
-                                updateSort={queryParams.sortPacks}
-                            />
-                            <div className={s.selectCard}>
-                                <Pagination
-                                    totalCards={allCards?.cardPacksTotalCount || 0}
-                                    pageSize={queryParams.pageCount || 10}
-                                    pageCurrent={queryParams.page || 1}
-                                    setCurrentPage={setCurrentPageHandler}
-                                />
-                                <div className={s.selectBody}>
-                                    <span>Show</span>
-                                    <Select
-                                        value={selectedOptionId}
-                                        tasks={selectOptions}
-                                        setValue={setSelectedOptionId}
+                            <div className={s.bodyCards}>
+                                <h2 className={s.title}>Packs List</h2>
+                                <div className={s.search}>
+                                    <InputSearch
+                                        valueSearch={queryParams.packName || ''}
+                                        callback={searchPackName}
+                                        addClass={s.input}
                                     />
-                                    <span>Cards per Page</span>
+                                    <button
+                                        onClick={() => openCloseModalWindow(true, 'add')}
+                                        className={s.button}>
+                                        Add new
+                                    </button>
+                                </div>
+                                <Table
+                                    data={data}
+                                    sortData={sortData}
+                                    openModalWindow={openCloseModalWindow}
+                                    updateSort={queryParams.sortPacks}
+                                />
+                                <div className={s.selectCard}>
+                                    <Pagination
+                                        totalCards={allCards?.cardPacksTotalCount || 0}
+                                        pageSize={queryParams.pageCount || 10}
+                                        pageCurrent={queryParams.page || 1}
+                                        setCurrentPage={setCurrentPageHandler}
+                                    />
+                                    <div className={s.selectBody}>
+                                        <span>Show</span>
+                                        <Select
+                                            value={selectedOptionId}
+                                            tasks={selectOptions}
+                                            setValue={setSelectedOptionId}
+                                        />
+                                        <span>Cards per Page</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <Modal
-                        isActive={isOpenModal}
-                        setActive={openCloseModalWindow}
-                        trigger={triggerModal}
-                    >
-                        {
-                            triggerModal === 'add'
-                                ? <AddNewPackModal
-                                    setNewTitlePack={createNewPack}
-                                    openCloseModalWindow={openCloseModalWindow}
-                                />
-                                : <DeletePackModal
-                                    packName={packInfo.name}
-                                    deletePack={deletePackHandler}
-                                    openCloseModalWindow={openCloseModalWindow}
-                                />
-                        }
-                        {
-                            errorGettingPacks && <div className={'error'}>
-                                {
-                                    (errorGettingPacks as FinallyErrorResponseType)?.data?.error || 'Ошибка соединения'
-                                }
-                            </div>
-                        }
-                    </Modal>
-                </>
+                        <Modal
+                            isActive={isOpenModal}
+                            setActive={openCloseModalWindow}
+                            trigger={triggerModal}
+                        >
+                            {
+                                triggerModal === 'add'
+                                    ? <AddNewPackModal
+                                        setNewTitlePack={createNewPack}
+                                        openCloseModalWindow={openCloseModalWindow}
+                                    />
+                                    : <DeletePackModal
+                                        packName={packInfo.name}
+                                        deletePack={deletePackHandler}
+                                        openCloseModalWindow={openCloseModalWindow}
+                                    />
+                            }
+                            {
+                                errorGettingPacks && <div className={'error'}>
+                                    {
+                                        (errorGettingPacks as FinallyErrorResponseType)?.data?.error || 'Ошибка соединения'
+                                    }
+                                </div>
+                            }
+                        </Modal>
+                    </>
             }
         </>
     );

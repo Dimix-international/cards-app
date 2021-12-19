@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {MouseEvent, useMemo} from 'react';
 import {useTable} from "react-table";
 import '../../table/Table.scss'
 import {useAppSelector} from "../../../../../../hook/redux";
@@ -8,27 +8,57 @@ import {CardType} from "../../../../../m3-dal/cards-api";
 type TableType = {
     data: Array<CardType>
     sortData: () => void
+    isOwnerCard:boolean
 }
 
 export const TableCard: React.FC<TableType> = ({
                                                data,
                                                sortData,
+                                                   isOwnerCard
                                            }) => {
 
     const columns = useMemo(() => COLUMNS_CARD, []);
 
+    const tableHooks = (hooks: any) => {
+        isOwnerCard && hooks.visibleColumns.push((columns: any) => [
+            ...columns,
+            {
+                Header: 'Actions',
+                id: 'actions',
+                Cell: ({row}: any) => {
+                        return (
+                            <div className={'buttons'}>
+                                <button
+                                    className={'button button_delete'}
+                                >
+                                    delete
+                                </button>
+                                <button className={'button button_edit'}
+                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                            e.stopPropagation();
+                                            console.log('edit')
+                                        }
+                                        }>edit
+                                </button>
+                            </div>
+                        )
+                }
+            }
+        ])
+    }
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
+        // @ts-ignore
+        setColumnOrder,
     } = useTable({
         // @ts-ignore
         columns,
         data,
-    });
-
+    },tableHooks);
 
     return (
         <>
