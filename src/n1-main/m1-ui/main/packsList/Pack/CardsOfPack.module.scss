@@ -57,7 +57,11 @@
     background-color: #1010d4;
   }
 }
-
+.selectCard {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
 .selectBody {
   display: flex;
   align-items: center;

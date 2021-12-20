@@ -88,5 +88,5 @@ table td {
     }
 }
 .sort.back:after {
-    transform: rotate(180deg);
+    transform: translate(0px, -50%) rotate(180deg);
 }

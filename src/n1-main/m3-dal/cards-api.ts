@@ -52,8 +52,15 @@ export const cardsApi = createApi({
                 },
                 method: 'GET'
             })
+        }),
+        createNewCard: build.mutation<any, {cardsPack_id:string, question:string, answer:string}>({
+            query:(arg) =>({
+                url:'cards/card',
+                data: {card: {...arg}},
+                method:'POST',
+            })
         })
     })
 });
 
-export const {useGetCardsOfPackQuery} = cardsApi;
+export const {useGetCardsOfPackQuery, useCreateNewCardMutation} = cardsApi;

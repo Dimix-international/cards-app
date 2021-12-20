@@ -1,18 +1,22 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {
-    QueryParamsGetCardsOfPackType,
+    QueryParamsGetCardsOfPackType, useCreateNewCardMutation,
     useGetCardsOfPackQuery
 } from "../../../../m3-dal/cards-api";
 import {TableCard} from "./tableCard/TableCard";
 import s from './CardsOfPack.module.scss'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useAppSelector} from "../../../../../hook/redux";
+import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 import {InputSearch} from "../searchInput/SearchInput";
 import {Loader} from "../../../common/Loader/Loader";
-import {OptionsSelectType} from "../PacksList";
+import {ModalTriggerType, OptionsSelectType, packInfoType} from "../PacksList";
 import {Select} from "../../../common/Select/Select";
 import {setPackListParams} from "../../../../m2-bll/a1-pakcList/packListReducer";
+import {Pagination} from "../../../common/Pagination/Pagination";
+import {SortType} from "../../../../m3-dal/pack-list-api";
+import {setAppStatus, setIsOpenedModal} from "../../../../m2-bll/app-reducer";
+import {AxiosResponse} from "axios";
 
 type stateFromTableType = {
     packName: string,
@@ -36,12 +40,12 @@ type PackType = {}
 export const CardsOfPack: React.FC<PackType> = React.memo(props => {
 
         const isAuth = useAppSelector(state => state.app.isAuthUser);
-
+        console.log(isAuth)
         const [searchParams, setSearchParams] = useSearchParams();
         const navigate = useNavigate();
         const location = useLocation();
         const packInfo: stateFromTableType = location.state;
-
+        const dispatch = useAppDispatch();
 
         const cardId = searchParams.get('cardsPack_id') || ''; //поисковый запрос, || '' -если не найдет
         const userId = useAppSelector(state => state.loginization.user._id);
@@ -58,22 +62,56 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         const {
             data,
             isLoading,
+            isFetching,
             isError,
         } = useGetCardsOfPackQuery(queryParams, {
-            skip: !isAuth
+            skip: !isAuth,
         });
 
+        const [createCard] = useCreateNewCardMutation();
+
         const sortData = useCallback(() => {
-            console.log('sort')
-            /*const sort: SortType = queryParams.sortPacks === '0' ? '1' : '0';
-            setQueryParams({...queryParams, sortPacks: sort})*/
-        }, []);
+            const sort: SortType = queryParams.sortCards === '0updated' ? '1updated' : '0updated';
+            setQueryParams({...queryParams, sortCards: sort})
+        }, [queryParams]);
+
         const goBack = () => navigate(-1);
 
 
         const searchCardName = useCallback((searchValue: string) => {
             setQueryParams({...queryParams, cardQuestion: searchValue})
-        }, [queryParams])
+        }, [queryParams]);
+
+        const setCurrentPageHandler = useCallback((page: number) => {
+            setQueryParams({...queryParams, page})
+        }, [queryParams]);
+
+        const createUpdateCardHandler = useCallback(async (question: string, answer: string) => {
+            dispatch(setAppStatus('loading'));
+            try {
+
+                /* if (triggerModal === 'edit') {
+                     await updatePack({_id: packInfo.id, name});
+                     dispatch(setIsOpenedModal(false));
+                     dispatch(setAppStatus('succeeded'));
+                 } else {
+                     const response = await createCard({name});
+                     dispatch(setIsOpenedModal(false));
+                     dispatch(setAppStatus('succeeded'));
+                 }*/
+                await createCard({
+                    cardsPack_id: packInfo.userIdPack,
+                    question,
+                    answer
+                });
+                dispatch(setIsOpenedModal(false));
+                dispatch(setAppStatus('succeeded'));
+
+
+            } catch (e) {
+                dispatch(setAppStatus('failed'));
+            }
+        }, [createCard, dispatch, packInfo.userIdPack]);
 
         useEffect(() => {
             const el = selectOptions.find(option => option.id === selectedOptionId);
@@ -87,7 +125,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         return (
             <>
                 {
-                    isLoading
+                    isLoading || isFetching
                         ? <Loader/>
                         : <div className={s.container}>
                             <div className={s.header}>
@@ -122,15 +160,24 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                                                 data={data?.cards || []}
                                                 sortData={sortData}
                                                 isOwnerCard={packInfo.userIdPack === String(userId)}
+                                                updateSort={queryParams.sortCards}
                                             />
-                                            <div className={s.selectBody}>
-                                                <span>Show</span>
-                                                <Select
-                                                    value={selectedOptionId}
-                                                    tasks={selectOptions}
-                                                    setValue={setSelectedOptionId}
+                                            <div className={s.selectCard}>
+                                                <Pagination
+                                                    totalCards={data?.cardsTotalCount || 0}
+                                                    pageSize={queryParams.pageCount || 10}
+                                                    pageCurrent={queryParams.page || 1}
+                                                    setCurrentPage={setCurrentPageHandler}
                                                 />
-                                                <span>Cards per Page</span>
+                                                <div className={s.selectBody}>
+                                                    <span>Show</span>
+                                                    <Select
+                                                        value={selectedOptionId}
+                                                        tasks={selectOptions}
+                                                        setValue={setSelectedOptionId}
+                                                    />
+                                                    <span>Cards per Page</span>
+                                                </div>
                                             </div>
                                         </>
                             }

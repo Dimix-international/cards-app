@@ -1,14 +1,18 @@
 import React, {ChangeEvent, useState} from "react";
-import s from './AddNewModal.module.scss'
-import SuperButton from "../../../common/SuperButton/SuperButton";
-import {ModalTriggerType} from "../PacksList";
+import s from './AddEditCardModal.module.scss'
+
+import SuperButton from "../../../../common/SuperButton/SuperButton";
+import {ModalTriggerType} from "../../PacksList";
+
 type AddNewPackModalType = {
     setNewTitlePack:(name:string) => void
     openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
+    title:string
 }
-export const AddNewPackModal :React.FC<AddNewPackModalType> = React.memo(props => {
 
-    const {setNewTitlePack, openCloseModalWindow} = props;
+export const AddEditCardModal :React.FC<AddNewPackModalType> = React.memo(props => {
+
+    const {setNewTitlePack, openCloseModalWindow, title} = props;
     const[tempValue, setTempValue] = useState('');
 
     const onChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
@@ -25,15 +29,23 @@ export const AddNewPackModal :React.FC<AddNewPackModalType> = React.memo(props =
     return(
         <div className={s.container}>
             <div className={s.top}>
-                <h2>Add new pack</h2>
+                <h2>{title}</h2>
                 <span onClick={closeModalWindow}>X</span>
             </div>
             <div className={s.body}>
-                <p>Name pack</p>
+                <p>Question</p>
                 <input
                     type="text"
                     onChange={onChangeHandler}
                     value={tempValue}
+                    data-name={'question'}
+                />
+                <p>Answer</p>
+                <input
+                    type="text"
+                    onChange={onChangeHandler}
+                    value={tempValue}
+                    data-name={'answer'}
                 />
             </div>
             <div className={s.btns}>

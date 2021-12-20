@@ -1,21 +1,23 @@
 import React, {MouseEvent, useMemo} from 'react';
 import {useTable} from "react-table";
 import '../../table/Table.scss'
-import {useAppSelector} from "../../../../../../hook/redux";
 import {COLUMNS_CARD} from "./columnCard";
 import {CardType} from "../../../../../m3-dal/cards-api";
+import {SortType} from "../../../../../m3-dal/pack-list-api";
 
 type TableType = {
     data: Array<CardType>
     sortData: () => void
-    isOwnerCard:boolean
+    isOwnerCard: boolean
+    updateSort: SortType | undefined
 }
 
 export const TableCard: React.FC<TableType> = ({
-                                               data,
-                                               sortData,
-                                                   isOwnerCard
-                                           }) => {
+                                                   data,
+                                                   sortData,
+                                                   isOwnerCard,
+                                                   updateSort
+                                               }) => {
 
     const columns = useMemo(() => COLUMNS_CARD, []);
 
@@ -26,22 +28,22 @@ export const TableCard: React.FC<TableType> = ({
                 Header: 'Actions',
                 id: 'actions',
                 Cell: ({row}: any) => {
-                        return (
-                            <div className={'buttons'}>
-                                <button
-                                    className={'button button_delete'}
-                                >
-                                    delete
-                                </button>
-                                <button className={'button button_edit'}
-                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                                            e.stopPropagation();
-                                            console.log('edit')
-                                        }
-                                        }>edit
-                                </button>
-                            </div>
-                        )
+                    return (
+                        <div className={'buttons'}>
+                            <button
+                                className={'button button_delete'}
+                            >
+                                delete
+                            </button>
+                            <button className={'button button_edit'}
+                                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                                        e.stopPropagation();
+                                        console.log('edit')
+                                    }
+                                    }>edit
+                            </button>
+                        </div>
+                    )
                 }
             }
         ])
@@ -52,13 +54,11 @@ export const TableCard: React.FC<TableType> = ({
         headerGroups,
         rows,
         prepareRow,
-        // @ts-ignore
-        setColumnOrder,
     } = useTable({
         // @ts-ignore
         columns,
         data,
-    },tableHooks);
+    }, tableHooks);
 
     return (
         <>
@@ -73,7 +73,10 @@ export const TableCard: React.FC<TableType> = ({
                                     if (column.Header === 'Last Updated') {
                                         return (
                                             <th
-                                                className={'sort'}
+                                                className={updateSort === '0updated'
+                                                    ? 'sort'
+                                                    : 'sort back'
+                                                }
                                                 {...column.getHeaderProps()}
                                                 onClick={sortData}
                                             >

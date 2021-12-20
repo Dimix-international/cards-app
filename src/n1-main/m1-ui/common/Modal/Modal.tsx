@@ -4,15 +4,15 @@ import {ModalTriggerType} from "../../main/packsList/PacksList";
 
 type ModalType = {
     isActive: boolean,
-    setActive: (value: boolean, trigger: ModalTriggerType) => void
-    trigger: ModalTriggerType
+    setActive: (value: boolean, trigger: ModalTriggerType | null) => void
+    trigger: ModalTriggerType | null
 }
 export const Modal: React.FC<ModalType> = React.memo(props => {
 
     const {isActive, setActive,trigger, children} = props;
 
     const closeModal = () => {
-        setActive(false, trigger)
+        setActive(false, trigger )
     }
     const clickContent = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();

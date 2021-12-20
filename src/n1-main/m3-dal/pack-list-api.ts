@@ -75,14 +75,12 @@ export const packListApi = createApi({
             invalidatesTags: ['Packs']
         }),
         updatePack: build.mutation<ObjectPackType, { _id: string, name: string }>({
-            query: ({_id, ...rest}) => ({
-                url: `cards/pack/${_id}`,
-                method: 'POST',
-                data: {_id, rest},
+            query: (arg) => ({
+                url: `cards/pack`,
+                method: 'PUT',
+                data: {cardsPack: arg},
             }),
-            invalidatesTags: (result, args: any) => [
-                {type: 'Packs', id: args._id}
-            ]
+            invalidatesTags: ['Packs'],
         })
     })
 })
@@ -91,4 +89,5 @@ export const {
     useGetAllPacksQuery,
     useCreateNewPackMutation,
     useDeletePackMutation,
+    useUpdatePackMutation
 } = packListApi;

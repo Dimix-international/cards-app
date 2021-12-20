@@ -52,7 +52,10 @@ export const Table: React.FC<TableType> = ({
                                 <button className={'button button_edit'}
                                         onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                             e.stopPropagation();
-                                            console.log('edit')
+                                            openModalWindow(true, "edit", {
+                                                id: row.original._id,
+                                                name: row.original.name
+                                            })
                                         }
                                         }>edit
                                 </button>
@@ -111,7 +114,6 @@ export const Table: React.FC<TableType> = ({
                                     if (column.Header === 'Last Updated') {
                                         return (
                                             <th
-                                                /*className={'sort'}*/
                                                 className={updateSort === '0updated'
                                                     ? 'sort'
                                                     : 'sort back'

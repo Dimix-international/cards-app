@@ -1,5 +1,5 @@
 import React from "react";
-import s from './../AddNew/AddNewModal.module.scss'
+import s from '../AddEditPackModal/AddEditPackModal.module.scss'
 import s2 from './DeleteModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
 import {ModalTriggerType} from "../PacksList";
@@ -7,7 +7,7 @@ import {ModalTriggerType} from "../PacksList";
 type DeletePackModalType = {
     packName:string
     deletePack:() => void
-    openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
+    openCloseModalWindow: (value: boolean, trigger: ModalTriggerType | null) => void
 }
 export const DeletePackModal :React.FC<DeletePackModalType> = React.memo(props => {
 
@@ -17,7 +17,7 @@ export const DeletePackModal :React.FC<DeletePackModalType> = React.memo(props =
         deletePack();
     }
     const closeModalWindow = () => {
-        openCloseModalWindow(false, 'delete')
+        openCloseModalWindow(false, null)
     }
     return(
         <div className={s.container}>

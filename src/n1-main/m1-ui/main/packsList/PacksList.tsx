@@ -7,6 +7,7 @@ import {
     useCreateNewPackMutation,
     useDeletePackMutation,
     useGetAllPacksQuery,
+    useUpdatePackMutation,
 } from "../../../m3-dal/pack-list-api";
 import {Loader} from "../../common/Loader/Loader";
 import s from './packList.module.scss'
@@ -17,8 +18,8 @@ import {RadioButton} from "../../common/RadioButtons/RadioButton";
 import {Range} from "./range/Range";
 import {setAppStatus, setIsOpenedModal} from "../../../m2-bll/app-reducer";
 import {Modal} from "../../common/Modal/Modal";
-import {AddNewPackModal} from "./AddNew/AddNewModal";
-import {DeletePackModal} from "./DeletePack/DeletePackModal";
+import {AddEditPackModal} from "./AddEditPackModal/AddEditPackModal";
+import {DeletePackModal} from "./DeletePackModal/DeletePackModal";
 import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
@@ -42,7 +43,7 @@ const selectOptions: Array<OptionsSelectType> = [
         value: '50'
     },
 ]
-export type ModalTriggerType = 'add' | 'delete';
+export type ModalTriggerType = 'add' | 'delete' | 'edit';
 
 export type packInfoType = {
     id: string,
@@ -53,11 +54,12 @@ export const PacksList = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedOptionId, setSelectedOptionId] = useState(selectOptions[0].id);
-    const [triggerModal, setTriggerModal] = useState<ModalTriggerType>('add');
+    const [triggerModal, setTriggerModal] = useState<ModalTriggerType | null>(null);
     const [packInfo, setPackInfo] = useState<packInfoType>({
         id: '',
         name: ''
     });
+
 
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
@@ -79,6 +81,7 @@ export const PacksList = () => {
 
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
+    const [updatePack] = useUpdatePackMutation();
 
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
@@ -115,28 +118,39 @@ export const PacksList = () => {
         }))
     }, [queryParams, dispatch]);
 
-    const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
+    const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType | null,
                                               info?: packInfoType) => {
         dispatch(setIsOpenedModal(value));
-        if (triggerName === 'delete') {
-            info && setPackInfo({...info});
-        }
         setTriggerModal(triggerName);
+        if(!value) {
+
+            setTimeout(() =>{
+                setPackInfo({id:'', name: ''});
+                setTriggerModal(null);
+            },400)
+
+        } else{
+            if (triggerName === 'delete' || triggerName === 'edit') {
+                info && setPackInfo({...info});
+            } else{
+                setPackInfo({id:'', name:''})
+            }
+        }
     }, [dispatch]);
 
 
-    const createNewPack = useCallback(async (name: string) => {
+    const createUpdatePackHandler = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
         try {
+
             const response = await createPack({name});
             dispatch(setIsOpenedModal(false));
             dispatch(setAppStatus('succeeded'));
-
-            navigate(`/packs-list/cards/card?cardsPack_id=${(response as AxiosResponse).data._id} `,
+            navigate(`/packs-list/cards/card?cardsPack_id=${(response as AxiosResponse).data._id}`,
                 {
                     replace: true,
                     state: {
-                        packName: packInfo.name,
+                        packName: name,
                         userIdPack: (response as AxiosResponse).data.user_id
                     }
                 }
@@ -144,7 +158,18 @@ export const PacksList = () => {
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
-    }, [createPack, dispatch, navigate, packInfo.name]);
+    }, [createPack, dispatch, navigate]);
+
+    const updatePackHandler = useCallback(async (name: string) => {
+        dispatch(setAppStatus('loading'));
+        try {
+            await updatePack({_id:packInfo.id, name});
+            dispatch(setIsOpenedModal(false));
+            dispatch(setAppStatus('succeeded'));
+        } catch (e) {
+            dispatch(setAppStatus('failed'));
+        }
+    }, [dispatch,packInfo.id, updatePack]);
 
     const deletePackHandler = useCallback(async () => {
         dispatch(setAppStatus('loading'));
@@ -155,7 +180,8 @@ export const PacksList = () => {
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
-    }, [dispatch, deletePack, packInfo])
+    }, [dispatch, deletePack, packInfo]);
+
 
     //установка query параметров в url
     useEffect(() => {
@@ -267,22 +293,25 @@ export const PacksList = () => {
                         >
                             {
                                 triggerModal === 'add'
-                                    ? <AddNewPackModal
-                                        setNewTitlePack={createNewPack}
+                                    ? <AddEditPackModal
+                                        setNewTitlePack={createUpdatePackHandler}
                                         openCloseModalWindow={openCloseModalWindow}
+                                        title={'Add new pack'}
+                                        trigger={'add'}
+                                    />
+                                    : triggerModal === 'edit'
+                                    ? <AddEditPackModal
+                                        setNewTitlePack={updatePackHandler}
+                                        openCloseModalWindow={openCloseModalWindow}
+                                        title={'Edit pack'}
+                                        namePack={packInfo.name}
+                                        trigger={'edit'}
                                     />
                                     : <DeletePackModal
                                         packName={packInfo.name}
                                         deletePack={deletePackHandler}
                                         openCloseModalWindow={openCloseModalWindow}
                                     />
-                            }
-                            {
-                                errorGettingPacks && <div className={'error'}>
-                                    {
-                                        (errorGettingPacks as FinallyErrorResponseType)?.data?.error || 'Ошибка соединения'
-                                    }
-                                </div>
                             }
                         </Modal>
                     </>
