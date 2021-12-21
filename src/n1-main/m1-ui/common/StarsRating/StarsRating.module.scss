@@ -1,0 +1,113 @@
+.simple__rating {
+  position: relative;
+  font-size: 30px;
+  display: inline-block;
+
+  &:before{
+    content: "★★★★★";
+    display: block;
+  }
+}
+.simpleRating__items{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row-reverse; /*чтобы при hover закрашивались предыдущие*/
+  overflow: hidden;
+}
+/*скрываем радио*/
+.simpleRating__item {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+.simpleRating__label {
+  flex: 0 0 20%;
+  height: 100%;
+  cursor: pointer;
+  color:grey;
+
+  /*накладываем звездочку на звезды*/
+  &:before{
+    content: "★";
+    display: block;
+    transition: color 0.3s ease 0s;
+  }
+}
+/*чтобы при hover и checked закрашивались предыдущие*/
+.simpleRating__label:hover,
+.simpleRating__label:hover ~ .simpleRating__label,
+.simpleRating__label:checked ~ .simpleRating__label:hover{
+  color: #5252c9;
+}
+/*простой вариант выбрать звездочку*/
+.simpleRating__item:checked,
+.simpleRating__item:checked ~ .simpleRating__label {
+  color:darkblue;
+}
+
+
+/*сложный рейтинг*/
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.rating {
+  display: flex;
+  align-items: flex-end;
+  font-size: 1.5rem;
+}
+.rating__body {
+  position: relative;
+
+  &:before {
+    content: "★★★★★";
+    display: block;
+    color:grey;
+  }
+}
+/*заполняющаяся линия - закрашиваем звезды*/
+.rating__active {
+  position: absolute;
+  width: 0%; //ширина отвечающая за заливку
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+
+  &:before{
+    content: "★★★★★";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    color: darkblue;
+  }
+}
+.rating__items {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+.rating__item {
+  flex: 0 0 20%;
+  height: 100%;
+  opacity: 0;
+}
+.rating__value {
+  font-size: 60%;
+  padding-left: 10px;
+  line-height: 1;
+}

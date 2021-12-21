@@ -4,6 +4,7 @@ import '../../table/Table.scss'
 import {COLUMNS_CARD} from "./columnCard";
 import {CardType} from "../../../../../m3-dal/cards-api";
 import {SortType} from "../../../../../m3-dal/pack-list-api";
+import {StarsRating} from "../../../../common/StarsRating/StarsRating";
 
 type TableType = {
     data: Array<CardType>
@@ -98,15 +99,21 @@ export const TableCard: React.FC<TableType> = ({
                 </thead>
                 <tbody {...getTableBodyProps()}>
                 {
-                    rows.map(row => {
+                    rows.map((row,indexRow) => {
+
                         prepareRow(row);
                         return (
 
                             <tr {...row.getRowProps()}>
                                 {
-                                    row.cells.map(cell => {
+
+                                    row.cells.map((cell, index) => {
                                         return <td {...cell.getCellProps()}>
-                                            {cell.render('Cell')}
+                                            {
+                                                cell.column.Header === 'Grade'
+                                                ? <StarsRating rating={data[indexRow].rating } />
+                                                : cell.render('Cell')
+                                            }
                                         </td>
                                     })
                                 }

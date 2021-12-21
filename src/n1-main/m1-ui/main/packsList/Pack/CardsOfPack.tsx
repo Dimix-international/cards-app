@@ -1,7 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {
-    QueryParamsGetCardsOfPackType, useCreateNewCardMutation,
+    Navigate,
+    useLocation,
+    useNavigate,
+    useSearchParams
+} from "react-router-dom";
+import {
+    QueryParamsGetCardsOfPackType,
+    useCreateNewCardMutation,
     useGetCardsOfPackQuery
 } from "../../../../m3-dal/cards-api";
 import {TableCard} from "./tableCard/TableCard";
@@ -10,34 +16,34 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 import {InputSearch} from "../searchInput/SearchInput";
 import {Loader} from "../../../common/Loader/Loader";
-import {ModalTriggerType, OptionsSelectType, packInfoType} from "../PacksList";
+import {OptionsSelectType} from "../PacksList";
 import {Select} from "../../../common/Select/Select";
-import {setPackListParams} from "../../../../m2-bll/a1-pakcList/packListReducer";
 import {Pagination} from "../../../common/Pagination/Pagination";
 import {SortType} from "../../../../m3-dal/pack-list-api";
 import {setAppStatus, setIsOpenedModal} from "../../../../m2-bll/app-reducer";
-import {AxiosResponse} from "axios";
+import {StarsRating} from "../../../common/StarsRating/StarsRating";
 
 type stateFromTableType = {
     packName: string,
     userIdPack: string
 }
-const selectOptions: Array<OptionsSelectType> = [
-    {
-        id: '1',
-        value: '5'
-    },
-    {
-        id: '2',
-        value: '10'
-    },
-    {
-        id: '3',
-        value: '20'
-    },
-]
 type PackType = {}
 export const CardsOfPack: React.FC<PackType> = React.memo(props => {
+
+        const selectOptions: Array<OptionsSelectType> = [
+            {
+                id: '1',
+                value: '5'
+            },
+            {
+                id: '2',
+                value: '10'
+            },
+            {
+                id: '3',
+                value: '20'
+            },
+        ]
 
         const isAuth = useAppSelector(state => state.app.isAuthUser);
         console.log(isAuth)
@@ -69,6 +75,8 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         });
 
         const [createCard] = useCreateNewCardMutation();
+
+        const[starsRating, setStarsRating] = useState(2.6)
 
         const sortData = useCallback(() => {
             const sort: SortType = queryParams.sortCards === '0updated' ? '1updated' : '0updated';
@@ -122,7 +130,12 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                 })
             }
         }, [selectedOptionId]);
-        return (
+
+    if (!isAuth) {
+        return <Navigate to={'/login'} replace/>
+    }
+
+    return (
             <>
                 {
                     isLoading || isFetching

@@ -11,7 +11,6 @@ import {
     useRegistrationAuthMutation
 } from "../../../n1-main/m3-dal/auth-api";
 import {setAppStatus} from "../../../n1-main/m2-bll/app-reducer";
-import {AxiosError} from "axios";
 
 
 type InitialValuesType = {
@@ -34,7 +33,7 @@ export const Register = () => {
     const navigate = useNavigate();
 
     const [registrationUser, {error}] = useRegistrationAuthMutation()
-    console.log(error)
+
     const validationSchema = yup.object().shape({
         email: yup.string().email('Invalid format email').required('Required'),
         password: yup.string().matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
