@@ -3,24 +3,23 @@ import s from './AddEditCardModal.module.scss'
 
 import SuperButton from "../../../../common/SuperButton/SuperButton";
 import {ModalTriggerType} from "../../../../../m2-bll/app-reducer";
+import {CardInfoType} from "../CardsOfPack";
 
 
-type CardTemInfoType = {
-    question: string,
-    answer: string
-}
+
 type AddNewCardModalType = {
-    setNewCard: (question: string, answer: string) => void
+    setNewCard: (id:string, question: string, answer: string) => void
     openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
     title: string
-    cardInfo?: CardTemInfoType
+    cardInfo?: CardInfoType
     trigger: ModalTriggerType
 }
 
 export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props => {
 
     const {setNewCard, openCloseModalWindow, title, cardInfo, trigger} = props;
-    const [tempValue, setTempValue] = useState<CardTemInfoType>(cardInfo || {
+    const [tempValue, setTempValue] = useState<CardInfoType>(cardInfo || {
+        id:'',
         question: '',
         answer: '',
     });
@@ -31,9 +30,10 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
             : setTempValue ({...tempValue, answer: e.currentTarget.value} )
     }
 
-    const sendNewTitlePack = () => {
-        setNewCard(tempValue.question, tempValue.answer);
+    const sendNewValuesCard = () => {
+        setNewCard(tempValue.id, tempValue.question, tempValue.answer);
         setTempValue({
+            id: '',
             question: '',
             answer: '',
         });
@@ -71,7 +71,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     Cancel
                 </SuperButton>
                 <SuperButton className={`${s.btn} ${s.save}`}
-                             onClick={sendNewTitlePack}>Save</SuperButton>
+                             onClick={sendNewValuesCard}>Save</SuperButton>
             </div>
         </div>
     )

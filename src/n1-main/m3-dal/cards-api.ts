@@ -31,13 +31,13 @@ type ResponseGetCard = {
 }
 export type QueryParamsGetCardsOfPackType = {
     cardAnswer?: string,
-    cardQuestion?:string,
+    cardQuestion?: string,
     cardsPack_id: string,
     min?: number,
-    max?:number,
-    sortCards?:SortType,
-    page?:number,
-    pageCount?:number,
+    max?: number,
+    sortCards?: SortType,
+    page?: number,
+    pageCount?: number,
 }
 
 export const cardsApi = createApi({
@@ -55,15 +55,36 @@ export const cardsApi = createApi({
             }),
             providesTags: ['Cards']
         }),
-        createNewCard: build.mutation<any, {cardsPack_id:string, question:string, answer:string}>({
-            query:(arg) =>({
-                url:'cards/card',
-                method:'POST',
+        createNewCard: build.mutation<{ newCard: CardType }, { cardsPack_id: string, question: string, answer: string }>({
+            query: (arg) => ({
+                url: 'cards/card',
+                method: 'POST',
                 data: {card: arg},
             }),
             invalidatesTags: ['Cards']
+        }),
+        deleteCard: build.mutation<{ deletedCard: CardType }, { id: string }>({
+            query: (arg) => ({
+                url: 'cards/card',
+                method: 'DELETE',
+                params: {...arg}
+            }),
+            invalidatesTags: ['Cards']
+        }),
+        editCard: build.mutation<void, { _id: string, question: string, answer: string }>({
+            query: (arg) => ({
+                url: 'cards/card',
+                method: 'PUT',
+                data: {card: arg},
+            }),
+            invalidatesTags: ['Cards'],
         })
     })
 });
 
-export const {useGetCardsOfPackQuery, useCreateNewCardMutation} = cardsApi;
+export const {
+    useGetCardsOfPackQuery,
+    useCreateNewCardMutation,
+    useDeleteCardMutation,
+    useEditCardMutation,
+} = cardsApi;

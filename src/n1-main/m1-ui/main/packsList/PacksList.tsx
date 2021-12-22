@@ -24,7 +24,7 @@ import {
 } from "../../../m2-bll/app-reducer";
 import {Modal} from "../../common/Modal/Modal";
 import {AddEditPackModal} from "./AddEditPackModal/AddEditPackModal";
-import {DeletePackModal} from "./DeletePackModal/DeletePackModal";
+import {DeleteModalWindow} from "./DeletePackModal/DeleteModalWindow";
 import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
@@ -85,7 +85,6 @@ export const PacksList = () => {
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
     const [updatePack] = useUpdatePackMutation();
-    console.log(allCards)
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
@@ -311,10 +310,11 @@ export const PacksList = () => {
                                         trigger={'editPack'}
                                     />
                                     : triggerModal === 'deletePack'
-                                        ? <DeletePackModal
-                                            packName={packInfo.name}
+                                        ? <DeleteModalWindow
+                                            nameValue={packInfo.name}
                                             deletePack={deletePackHandler}
                                             openCloseModalWindow={openCloseModalWindow}
+                                            triggerDelete={'deletePack'}
                                         />
                                         : false
                             }
