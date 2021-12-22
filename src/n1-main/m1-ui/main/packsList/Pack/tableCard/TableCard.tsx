@@ -5,6 +5,7 @@ import {COLUMNS_CARD} from "./columnCard";
 import {CardType} from "../../../../../m3-dal/cards-api";
 import {SortType} from "../../../../../m3-dal/pack-list-api";
 import {StarsRating} from "../../../../common/StarsRating/StarsRating";
+import {useAppSelector} from "../../../../../../hook/redux";
 
 type TableType = {
     data: Array<CardType>
@@ -21,6 +22,7 @@ export const TableCard: React.FC<TableType> = ({
                                                }) => {
 
     const columns = useMemo(() => COLUMNS_CARD, []);
+    const userId = useAppSelector(state => state.loginization.user._id);
 
     const tableHooks = (hooks: any) => {
         isOwnerCard && hooks.visibleColumns.push((columns: any) => [
@@ -111,7 +113,10 @@ export const TableCard: React.FC<TableType> = ({
                                         return <td {...cell.getCellProps()}>
                                             {
                                                 cell.column.Header === 'Grade'
-                                                ? <StarsRating rating={data[indexRow].rating } />
+                                                ? <StarsRating
+                                                        rating={data[indexRow].rating}
+                                                        isChangeRating={row.original.user_id === String(userId)}
+                                                    />
                                                 : cell.render('Cell')
                                             }
                                         </td>

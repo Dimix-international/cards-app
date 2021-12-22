@@ -146,7 +146,7 @@ export const _authApi = createApi({
                 }
             })
         }),
-        checkAuthUser: build.mutation<ResponseRegistrationType, {}>({
+        checkAuthUser: build.mutation<ResponseRegistrationType, void>({
             query: (arg) => ({
                 url: 'auth/me',
                 method: 'POST',

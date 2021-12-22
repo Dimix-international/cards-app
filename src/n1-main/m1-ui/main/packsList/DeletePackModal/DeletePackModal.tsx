@@ -2,12 +2,12 @@ import React from "react";
 import s from '../AddEditPackModal/AddEditPackModal.module.scss'
 import s2 from './DeleteModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
-import {ModalTriggerType} from "../PacksList";
+import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
 
 type DeletePackModalType = {
     packName:string
     deletePack:() => void
-    openCloseModalWindow: (value: boolean, trigger: ModalTriggerType | null) => void
+    openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
 }
 export const DeletePackModal :React.FC<DeletePackModalType> = React.memo(props => {
 

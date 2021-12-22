@@ -39,6 +39,7 @@ export type QueryParamsGetCardsOfPackType = {
     page?:number,
     pageCount?:number,
 }
+
 export const cardsApi = createApi({
     reducerPath: 'cardsApi',
     baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
@@ -51,14 +52,16 @@ export const cardsApi = createApi({
                     ...arg
                 },
                 method: 'GET'
-            })
+            }),
+            providesTags: ['Cards']
         }),
         createNewCard: build.mutation<any, {cardsPack_id:string, question:string, answer:string}>({
             query:(arg) =>({
                 url:'cards/card',
-                data: {card: {...arg}},
                 method:'POST',
-            })
+                data: {card: arg},
+            }),
+            invalidatesTags: ['Cards']
         })
     })
 });

@@ -23,7 +23,6 @@ import {CardsOfPack} from "./main/packsList/Pack/CardsOfPack";
 
 export const App = () => {
 
-
     const [checkAuthUser, {
         error: errorAuthUser,
         isLoading,
@@ -33,7 +32,7 @@ export const App = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkAuthUser({}).unwrap()
+        checkAuthUser().unwrap()
             .then(res => {
                 dispatch(setAppIsAuth(true));
                 dispatch(setUser(res))

@@ -4,9 +4,10 @@ import {COLUMNS} from "../column";
 import {CardPackType} from "../../../../m3-dal/auth-api";
 import {useAppSelector} from "../../../../../hook/redux";
 import './Table.scss'
-import {ModalTriggerType, packInfoType} from "../PacksList";
+import {packInfoType} from "../PacksList";
 import {Link} from "react-router-dom";
 import {SortType} from "../../../../m3-dal/pack-list-api";
+import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
 
 type TableType = {
     data: Array<CardPackType>
@@ -40,7 +41,7 @@ export const Table: React.FC<TableType> = ({
                                     className={'button button_delete'}
                                     onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                         e.stopPropagation();
-                                        openModalWindow(true, "delete", {
+                                        openModalWindow(true, "deletePack", {
                                             id: row.original._id,
                                             name: row.original.name
                                         })
@@ -52,7 +53,7 @@ export const Table: React.FC<TableType> = ({
                                 <button className={'button button_edit'}
                                         onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                             e.stopPropagation();
-                                            openModalWindow(true, "edit", {
+                                            openModalWindow(true, "editPack", {
                                                 id: row.original._id,
                                                 name: row.original.name
                                             })

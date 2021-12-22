@@ -87,6 +87,7 @@ export const packListApi = createApi({
 
 export const {
     useGetAllPacksQuery,
+    useLazyGetAllPacksQuery,
     useCreateNewPackMutation,
     useDeletePackMutation,
     useUpdatePackMutation

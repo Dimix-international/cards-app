@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useState} from "react";
 import s from './AddEditPackModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
-import {ModalTriggerType} from "../PacksList";
-import {useAppSelector} from "../../../../../hook/redux";
+import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
+
 
 type AddNewPackModalType = {
     setNewTitlePack:(name:string) => void
@@ -13,8 +13,8 @@ type AddNewPackModalType = {
 
 }
 export const AddEditPackModal :React.FC<AddNewPackModalType> = React.memo(props => {
-    const {setNewTitlePack, openCloseModalWindow, title, namePack,trigger} = props;
 
+    const {setNewTitlePack, openCloseModalWindow, title, namePack,trigger} = props;
 
     const[tempValue, setTempValue] = useState(namePack || '');
 

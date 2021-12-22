@@ -16,7 +16,12 @@ import {InputSearch} from "./searchInput/SearchInput";
 import {Select} from "../../common/Select/Select";
 import {RadioButton} from "../../common/RadioButtons/RadioButton";
 import {Range} from "./range/Range";
-import {setAppStatus, setIsOpenedModal} from "../../../m2-bll/app-reducer";
+import {
+    ModalTriggerType,
+    setAppStatus,
+    setIsOpenedModal,
+    setTriggerModal
+} from "../../../m2-bll/app-reducer";
 import {Modal} from "../../common/Modal/Modal";
 import {AddEditPackModal} from "./AddEditPackModal/AddEditPackModal";
 import {DeletePackModal} from "./DeletePackModal/DeletePackModal";
@@ -43,7 +48,6 @@ const selectOptions: Array<OptionsSelectType> = [
         value: '50'
     },
 ]
-export type ModalTriggerType = 'add' | 'delete' | 'edit';
 
 export type packInfoType = {
     id: string,
@@ -54,13 +58,12 @@ export const PacksList = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedOptionId, setSelectedOptionId] = useState(selectOptions[0].id);
-    const [triggerModal, setTriggerModal] = useState<ModalTriggerType | null>(null);
     const [packInfo, setPackInfo] = useState<packInfoType>({
         id: '',
         name: ''
     });
 
-
+    const triggerModal = useAppSelector(state => state.app.modalTrigger);
     const isAuth = useAppSelector(state => state.app.isAuthUser);
     const userId = useAppSelector(state => state.loginization.user._id);
     const isOpenModal = useAppSelector(state => state.app.isOpenedModal);
@@ -82,7 +85,7 @@ export const PacksList = () => {
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
     const [updatePack] = useUpdatePackMutation();
-
+    console.log(allCards)
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
@@ -118,23 +121,23 @@ export const PacksList = () => {
         }))
     }, [queryParams, dispatch]);
 
-    const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType | null,
+    const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
                                               info?: packInfoType) => {
         dispatch(setIsOpenedModal(value));
-        setTriggerModal(triggerName);
-        if(!value) {
+        if (!value) {
 
-            setTimeout(() =>{
-                setPackInfo({id:'', name: ''});
-                setTriggerModal(null);
-            },400)
+            setTimeout(() => {
+                setPackInfo({id: '', name: ''});
+                dispatch(setTriggerModal(null));
+            }, 400)
 
-        } else{
-            if (triggerName === 'delete' || triggerName === 'edit') {
+        } else {
+            if (triggerName === 'deletePack' || triggerName === 'editPack') {
                 info && setPackInfo({...info});
-            } else{
-                setPackInfo({id:'', name:''})
+            } else {
+                setPackInfo({id: '', name: ''})
             }
+            dispatch(setTriggerModal(triggerName));
         }
     }, [dispatch]);
 
@@ -163,13 +166,13 @@ export const PacksList = () => {
     const updatePackHandler = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
         try {
-            await updatePack({_id:packInfo.id, name});
+            await updatePack({_id: packInfo.id, name});
             dispatch(setIsOpenedModal(false));
             dispatch(setAppStatus('succeeded'));
         } catch (e) {
             dispatch(setAppStatus('failed'));
         }
-    }, [dispatch,packInfo.id, updatePack]);
+    }, [dispatch, packInfo.id, updatePack]);
 
     const deletePackHandler = useCallback(async () => {
         dispatch(setAppStatus('loading'));
@@ -256,7 +259,7 @@ export const PacksList = () => {
                                         addClass={s.input}
                                     />
                                     <button
-                                        onClick={() => openCloseModalWindow(true, 'add')}
+                                        onClick={() => openCloseModalWindow(true, 'addPack')}
                                         className={s.button}>
                                         Add new
                                     </button>
@@ -292,26 +295,28 @@ export const PacksList = () => {
                             trigger={triggerModal}
                         >
                             {
-                                triggerModal === 'add'
+                                triggerModal === 'addPack'
                                     ? <AddEditPackModal
                                         setNewTitlePack={createUpdatePackHandler}
                                         openCloseModalWindow={openCloseModalWindow}
                                         title={'Add new pack'}
-                                        trigger={'add'}
+                                        trigger={'addPack'}
                                     />
-                                    : triggerModal === 'edit'
+                                    : triggerModal === 'editPack'
                                     ? <AddEditPackModal
                                         setNewTitlePack={updatePackHandler}
                                         openCloseModalWindow={openCloseModalWindow}
                                         title={'Edit pack'}
                                         namePack={packInfo.name}
-                                        trigger={'edit'}
+                                        trigger={'editPack'}
                                     />
-                                    : <DeletePackModal
-                                        packName={packInfo.name}
-                                        deletePack={deletePackHandler}
-                                        openCloseModalWindow={openCloseModalWindow}
-                                    />
+                                    : triggerModal === 'deletePack'
+                                        ? <DeletePackModal
+                                            packName={packInfo.name}
+                                            deletePack={deletePackHandler}
+                                            openCloseModalWindow={openCloseModalWindow}
+                                        />
+                                        : false
                             }
                         </Modal>
                     </>

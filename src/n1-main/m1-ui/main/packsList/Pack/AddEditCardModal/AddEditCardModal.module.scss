@@ -36,6 +36,10 @@
     font-size: 1.5rem;
     padding: 5px;
     border-bottom: 2px solid grey;
+    margin-bottom: 7px;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 .btns {

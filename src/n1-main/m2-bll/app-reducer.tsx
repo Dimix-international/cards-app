@@ -1,6 +1,13 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-
+export type ModalTriggerType =
+    'addPack'
+    | 'deletePack'
+    | 'editPack'
+    | 'addCard'
+    | 'deleteCard'
+    | 'editCard'
+    | null;
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 type ErrorType = string | null;
@@ -10,6 +17,7 @@ const initialAppState = {
     error: null as ErrorType,
     isAuthUser: false,
     isOpenedModal: false,
+    modalTrigger: null as ModalTriggerType
 }
 
 export type InitialAppStateType = typeof initialAppState;
@@ -30,6 +38,9 @@ const slice = createSlice({
         setIsOpenedModal(state, action: PayloadAction<boolean>) {
             state.isOpenedModal = action.payload
         },
+        setTriggerModal(state, action: PayloadAction<ModalTriggerType>) {
+            state.modalTrigger = action.payload
+        },
     },
 })
 
@@ -39,5 +50,6 @@ export const {
     setAppStatus,
     setAppError,
     setIsOpenedModal,
-    setAppIsAuth}
-    = slice.actions;
+    setAppIsAuth,
+    setTriggerModal,
+} = slice.actions;

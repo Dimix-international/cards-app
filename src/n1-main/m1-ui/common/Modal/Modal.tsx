@@ -1,11 +1,12 @@
 import React, {MouseEvent} from "react";
 import s from './Modal.module.scss'
-import {ModalTriggerType} from "../../main/packsList/PacksList";
+import {ModalTriggerType} from "../../../m2-bll/app-reducer";
+
 
 type ModalType = {
     isActive: boolean,
-    setActive: (value: boolean, trigger: ModalTriggerType | null) => void
-    trigger: ModalTriggerType | null
+    setActive: (value: boolean, trigger: ModalTriggerType) => void
+    trigger: ModalTriggerType
 }
 export const Modal: React.FC<ModalType> = React.memo(props => {
 
