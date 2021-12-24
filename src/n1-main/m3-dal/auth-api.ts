@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import {BaseQueryFn, createApi} from "@reduxjs/toolkit/dist/query/react";
 
 
@@ -19,6 +19,7 @@ export type ResponseRegistrationType = {
     email: string
     isAdmin: boolean
     name: string
+    avatar?:string
     publicCardPacksCount: number
     rememberMe: boolean
     updated: string

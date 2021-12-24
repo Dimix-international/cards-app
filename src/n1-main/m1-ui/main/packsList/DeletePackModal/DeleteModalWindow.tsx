@@ -25,7 +25,11 @@ export const DeleteModalWindow: React.FC<DeletePackModalType> = React.memo(props
     return (
         <div className={s.container}>
             <div className={s.top}>
-                <h2>Delete Pack</h2>
+                <h2>{
+                    triggerDelete === 'deletePack'
+                        ? `Delete pack`
+                        : `Delete card`
+                }</h2>
                 <span onClick={closeModalWindow}>X</span>
             </div>
             <div className={`${s.body} ${s2.body}`}>

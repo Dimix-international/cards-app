@@ -29,6 +29,7 @@ import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
 import {User} from "../profile/User/User";
+import {EditProfileModal} from "./EditProfileModal/EditProfileModal";
 
 
 export type OptionsSelectType = {
@@ -57,7 +58,7 @@ export type packInfoType = {
 type PacksListType = {
     triggerPage: 'packList' | 'profilePage'
 }
-export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
+export const PacksList: React.FC<PacksListType> = React.memo((props) => {
 
     const {triggerPage} = props;
 
@@ -75,6 +76,8 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
     const isOpenModal = useAppSelector(state => state.app.isOpenedModal);
     const queryParams = useAppSelector(state => state.packList);
 
+    const {name: nickNameUser, email: emailUser} = useAppSelector(state => state.loginization.user);
+
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
@@ -89,11 +92,6 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
     }, {
         skip: !isAuth,
     });
-
-    useEffect(() => {
-        triggerPage === 'profilePage' && queryParams.user_id === null
-        && dispatch(setPackListParams({...queryParams, user_id: String(userId)}))
-    },[triggerPage, userId, dispatch])
 
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
@@ -204,6 +202,13 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
         setSearchParams({...Object.entries(searchParams), ...queryParams})
     }, [allCards, queryParams, searchParams, setSearchParams]);
 
+
+    useEffect(() => {
+        //чтобы на profile отражались только профиля packs
+        triggerPage === 'profilePage' && queryParams.user_id === null
+        && dispatch(setPackListParams({...queryParams, user_id: userId}))
+    }, [triggerPage, userId, dispatch])
+
     //установка значения select
     useEffect(() => {
         const el = selectOptions.find(option => option.id === selectedOptionId);
@@ -242,10 +247,13 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
                     :
                     <>
                         <div className={s.packList}>
-                            <div className={s.panelCards}>
+                            <div className={triggerPage === 'packList'
+                                ? s.panelCards
+                                : `${s.panelCards} ${s.noPadding}`}>
                                 {triggerPage === 'packList'
                                     ? <>
-                                        <h3 className={s.title}>Show pack cards</h3>
+                                        <h3 className={s.title}>Show pack
+                                            cards</h3>
                                         <div className={s.radioButtons}>
                                             <RadioButton
                                                 activeBtn={queryParams.user_id !== null}
@@ -259,13 +267,16 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
                                                 callback={setRadioButtonsValue}/>
                                         </div>
                                     </>
-                                    : <User />
+                                    : <User/>
                                 }
-                                <Range
-                                    minValue={queryParams.min || 0}
-                                    maxValue={queryParams.max || 100}
-                                    setMinMaxRange={setMinMaxRange}
-                                />
+                                <div className={triggerPage === 'packList'
+                                    ? s.noPadding
+                                    : s.rangeContainer}>
+                                    <Range
+                                        minValue={queryParams.min || 0}
+                                        maxValue={queryParams.max || 100}
+                                        setMinMaxRange={setMinMaxRange}
+                                    /></div>
                             </div>
                             <div className={s.bodyCards}>
                                 <h2 className={s.title}>Packs List</h2>
@@ -286,7 +297,7 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
                                     sortData={sortData}
                                     openModalWindow={openCloseModalWindow}
                                     updateSort={queryParams.sortPacks}
-                                    triggerPage={triggerPage }
+                                    triggerPage={triggerPage}
                                 />
                                 <div className={s.selectCard}>
                                     <Pagination
@@ -335,7 +346,16 @@ export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
                                             openCloseModalWindow={openCloseModalWindow}
                                             triggerDelete={'deletePack'}
                                         />
-                                        : false
+                                        : triggerModal === 'editProfile'
+                                            ? <EditProfileModal
+                                                openCloseModalWindow={openCloseModalWindow}
+                                                infoProfile={{
+                                                    nickName:nickNameUser,
+                                                    email: emailUser
+                                                }}
+                                                trigger={'editProfile'}
+                                            />
+                                            : false
                             }
                         </Modal>
                     </>

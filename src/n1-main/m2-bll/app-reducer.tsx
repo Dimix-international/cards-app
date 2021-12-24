@@ -1,5 +1,4 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AxiosError} from "axios";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export type ModalTriggerType =
     'addPack'
@@ -8,6 +7,7 @@ export type ModalTriggerType =
     | 'addCard'
     | 'deleteCard'
     | 'editCard'
+    | 'editProfile'
     | null;
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed';
 
