@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosRequestConfig} from "axios";
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import {BaseQueryFn, createApi} from "@reduxjs/toolkit/dist/query/react";
 
 
@@ -24,7 +24,7 @@ export type ResponseRegistrationType = {
     updated: string
     verified: boolean
     __v: number
-    _id: number
+    _id: string
 }
 export type ResponseLoginizationType = {
     Avatar?: string,
@@ -178,4 +178,5 @@ export const {
     useMakeLoginUserMutation,
     useLogOutUserMutation,
 } = _authApi;
+
 

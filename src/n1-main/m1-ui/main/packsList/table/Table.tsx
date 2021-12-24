@@ -13,14 +13,16 @@ type TableType = {
     data: Array<CardPackType>
     sortData: () => void
     openModalWindow: (value: boolean, trigger: ModalTriggerType, packInfo?: packInfoType) => void
-    updateSort:SortType | undefined
+    updateSort: SortType | undefined,
+    triggerPage: 'packList' | 'profilePage'
 }
 
 export const Table: React.FC<TableType> = ({
                                                data,
                                                sortData,
                                                openModalWindow,
-                                               updateSort
+                                               updateSort,
+                                               triggerPage
                                            }) => {
 
     const columns = useMemo(() => COLUMNS, []);
@@ -152,11 +154,13 @@ export const Table: React.FC<TableType> = ({
                                                 <Link
                                                     className={'tdLink'}
                                                     to={
-                                                        `/packs-list/cards/card?cardsPack_id=${row.original._id}`
+                                                        triggerPage === 'packList'
+                                                            ? `/packs-list/cards/card?cardsPack_id=${row.original._id}`
+                                                            : `/profile/cards/card?cardsPack_id=${row.original._id}`
                                                     }
                                                     state={{
-                                                        packName:cell.value,
-                                                        userIdPack:row.original.user_id
+                                                        packName: cell.value,
+                                                        userIdPack: row.original.user_id
                                                     }}
                                                 >
                                                     {cell.render('Cell')}

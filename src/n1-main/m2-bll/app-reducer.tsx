@@ -1,4 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {AxiosError} from "axios";
 
 export type ModalTriggerType =
     'addPack'
@@ -21,6 +22,7 @@ const initialAppState = {
 }
 
 export type InitialAppStateType = typeof initialAppState;
+
 
 const slice = createSlice({
     name: 'app',

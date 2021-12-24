@@ -55,8 +55,9 @@ export const App = () => {
                 <Route path="/" element={<Layout
                     error={finallyError as FinallyErrorResponseType}/>}>
                     <Route path="/" element={<Navigate to={'packs-list'}/>}/>
-                    <Route path={'packs-list'} element={<PacksList/>}/>
+                    <Route path={'packs-list'} element={<PacksList triggerPage={'packList'}/>}/>
                     <Route path={'packs-list/cards/card'} element={<CardsOfPack/>}/>
+                    <Route path={'profile/cards/card'} element={<CardsOfPack/>}/>
                     <Route path={'profile'} element={<Profile/>}/>
                     <Route path={'login'} element={<Login/>}/>
                     <Route path={'registration'} element={<Register/>}/>

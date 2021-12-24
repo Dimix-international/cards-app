@@ -28,6 +28,7 @@ import {DeleteModalWindow} from "./DeletePackModal/DeleteModalWindow";
 import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
+import {User} from "../profile/User/User";
 
 
 export type OptionsSelectType = {
@@ -53,7 +54,12 @@ export type packInfoType = {
     id: string,
     name: string
 }
-export const PacksList = () => {
+type PacksListType = {
+    triggerPage: 'packList' | 'profilePage'
+}
+export const PacksList: React.FC<PacksListType> = React.memo( (props) => {
+
+    const {triggerPage} = props;
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -77,10 +83,17 @@ export const PacksList = () => {
         isLoading,
         error: errorGettingPacks
     } = useGetAllPacksQuery({
-        ...queryParams
+        ...queryParams,
+        //чтобы когда мы на profile получали толко наши packs list
+        user_id: triggerPage === 'profilePage' ? String(userId) : queryParams.user_id
     }, {
         skip: !isAuth,
     });
+
+    useEffect(() => {
+        triggerPage === 'profilePage' && queryParams.user_id === null
+        && dispatch(setPackListParams({...queryParams, user_id: String(userId)}))
+    },[triggerPage, userId, dispatch])
 
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
@@ -230,19 +243,24 @@ export const PacksList = () => {
                     <>
                         <div className={s.packList}>
                             <div className={s.panelCards}>
-                                <h3 className={s.title}>Show pack cards</h3>
-                                <div className={s.radioButtons}>
-                                    <RadioButton
-                                        activeBtn={queryParams.user_id !== null}
-                                        name={'cardsRadio'} text={'My'}
-                                        value={'my'}
-                                        callback={setRadioButtonsValue}/>
-                                    <RadioButton
-                                        activeBtn={queryParams.user_id === null}
-                                        value={'all'}
-                                        name={'cardsRadio'} text={'All'}
-                                        callback={setRadioButtonsValue}/>
-                                </div>
+                                {triggerPage === 'packList'
+                                    ? <>
+                                        <h3 className={s.title}>Show pack cards</h3>
+                                        <div className={s.radioButtons}>
+                                            <RadioButton
+                                                activeBtn={queryParams.user_id !== null}
+                                                name={'cardsRadio'} text={'My'}
+                                                value={'my'}
+                                                callback={setRadioButtonsValue}/>
+                                            <RadioButton
+                                                activeBtn={queryParams.user_id === null}
+                                                value={'all'}
+                                                name={'cardsRadio'} text={'All'}
+                                                callback={setRadioButtonsValue}/>
+                                        </div>
+                                    </>
+                                    : <User />
+                                }
                                 <Range
                                     minValue={queryParams.min || 0}
                                     maxValue={queryParams.max || 100}
@@ -268,6 +286,7 @@ export const PacksList = () => {
                                     sortData={sortData}
                                     openModalWindow={openCloseModalWindow}
                                     updateSort={queryParams.sortPacks}
+                                    triggerPage={triggerPage }
                                 />
                                 <div className={s.selectCard}>
                                     <Pagination
@@ -323,4 +342,4 @@ export const PacksList = () => {
             }
         </>
     );
-}
+})

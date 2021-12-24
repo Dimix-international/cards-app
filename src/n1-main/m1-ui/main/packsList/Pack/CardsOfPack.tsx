@@ -65,7 +65,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         const isAuth = useAppSelector(state => state.app.isAuthUser);
         const userId = useAppSelector(state => state.loginization.user._id);
         const triggerModal = useAppSelector(state => state.app.modalTrigger);
-        console.log(isAuth);
+
         const [queryParams, setQueryParams] = useState<QueryParamsGetCardsOfPackType>({
             cardsPack_id: cardId,
             pageCount: 10,
@@ -111,8 +111,10 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         }, [queryParams]);
 
         const setCurrentPageHandler = useCallback((page: number) => {
-            setQueryParams({...queryParams, page})
-        }, [queryParams]);
+            if(isAuth) {
+                setQueryParams({...queryParams, page})
+            }
+        }, [isAuth,queryParams]);
 
         const createCardHandler = useCallback(async (id: string, question: string, answer: string) => {
 
@@ -173,9 +175,11 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         }, [dispatch, queryParamsPacksList, updateCard, updatePacksList])
 
 
-        const openCloseModalWindow = useCallback((value: boolean, triggerName: ModalTriggerType,
-                                                  info?: CardInfoType) => {
+        const openCloseModalWindow = useCallback(
+            (value: boolean, triggerName: ModalTriggerType, info?: CardInfoType) => {
+
             dispatch(setIsOpenedModal(value));
+
             if (!value) {
 
                 setTimeout(() => {

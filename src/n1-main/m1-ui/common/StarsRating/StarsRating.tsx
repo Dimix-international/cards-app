@@ -47,17 +47,23 @@ export const StarsRating:FC<StarsRatingType> = (props) => {
 
 
     const onMouseEnterHandle = (e:MouseEvent<HTMLInputElement>) => {
-        if(isChangeRating) {
+        /*if(isChangeRating) {
             if(ratingActiveRef.current) {
                 ratingActiveRef.current.style.width = `${setRatingActiveWidth(Number(e.currentTarget.value))}%`
             }
+        }*/
+        if(ratingActiveRef.current) {
+            ratingActiveRef.current.style.width = `${setRatingActiveWidth(Number(e.currentTarget.value))}%`
         }
     }
     const onMouseLeaveHandle = (e:MouseEvent<HTMLInputElement>) => {
-        if(isChangeRating) {
+        /*if(isChangeRating) {
             if(ratingActiveRef.current) {
                 ratingActiveRef.current.style.width = `${setRatingActiveWidth(rating)}%`
             }
+        }*/
+        if(ratingActiveRef.current) {
+            ratingActiveRef.current.style.width = `${setRatingActiveWidth(rating)}%`
         }
     }
     const setRating = (e:MouseEvent<HTMLInputElement>) => {
