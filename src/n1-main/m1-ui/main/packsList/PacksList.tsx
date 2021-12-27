@@ -76,7 +76,8 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const isOpenModal = useAppSelector(state => state.app.isOpenedModal);
     const queryParams = useAppSelector(state => state.packList);
 
-    const {name: nickNameUser, email: emailUser} = useAppSelector(state => state.loginization.user);
+    const {name: nickNameUser, email: emailUser, avatar: avatarUser} =
+        useAppSelector(state => state.loginization.user);
 
     const dispatch = useAppDispatch();
 
@@ -88,7 +89,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     } = useGetAllPacksQuery({
         ...queryParams,
         //чтобы когда мы на profile получали толко наши packs list
-        user_id: triggerPage === 'profilePage' ? String(userId) : queryParams.user_id
+        user_id: triggerPage === 'profilePage' ? userId : queryParams.user_id
     }, {
         skip: !isAuth,
     });
@@ -111,7 +112,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
         if (name === 'my') {
             dispatch(setPackListParams({
                 ...queryParams,
-                user_id: String(userId)
+                user_id: userId
             }))
         } else {
             dispatch(setPackListParams({...queryParams, user_id: null}))
@@ -350,8 +351,9 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
                                             ? <EditProfileModal
                                                 openCloseModalWindow={openCloseModalWindow}
                                                 infoProfile={{
-                                                    nickName:nickNameUser,
-                                                    email: emailUser
+                                                    nickName: nickNameUser,
+                                                    email: emailUser,
+                                                    avatar: avatarUser,
                                                 }}
                                                 trigger={'editProfile'}
                                             />

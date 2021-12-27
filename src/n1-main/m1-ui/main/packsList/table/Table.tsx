@@ -36,7 +36,7 @@ export const Table: React.FC<TableType> = ({
                 id: 'actions',
                 Header: 'Actions',
                 Cell: ({row}: any) => {
-                    if (row.original.user_id === String(userId)) {
+                    if (row.original.user_id === userId) {
                         return (
                             <div className={'buttons'}>
                                 <button
@@ -62,27 +62,29 @@ export const Table: React.FC<TableType> = ({
                                         }
                                         }>edit
                                 </button>
-                                <button className={'button'}
-                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                                            e.stopPropagation();
-                                            console.log('learn')
-                                        }
-                                        }>
+                                <Link
+                                    to={`/packs-list/learnPack?cardsPack_id=${row.original._id}`}
+                                    className={'button'}
+                                    state={{
+                                        packName:row.original.name
+                                    }}
+                                >
                                     Learn
-                                </button>
+                                </Link>
                             </div>
                         )
                     } else {
                         return (
                             <div className={'buttons'}>
-                                <button className={'button'}
-                                        onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                                            e.stopPropagation();
-                                            console.log('learn')
-                                        }
-                                        }>
+                                <Link
+                                    to={`/packs-list/learnPack?cardsPack_id=${row.original._id}`}
+                                    className={'button'}
+                                    state={{
+                                        packName:row.original.name
+                                    }}
+                                >
                                     Learn
-                                </button>
+                                </Link>
                             </div>
                         )
                     }

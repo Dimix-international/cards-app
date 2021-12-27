@@ -17,6 +17,10 @@ export type CardType = {
     user_id: string
     __v: number
     _id: string
+    answerImg?: null | string
+    answerVideo?: null | string
+    questionImg?: null | string
+    questionVideo?: null | string
 }
 type ResponseGetCard = {
     cards: Array<CardType>
@@ -78,6 +82,14 @@ export const cardsApi = createApi({
                 data: {card: arg},
             }),
             invalidatesTags: ['Cards'],
+        }),
+        setCardGrade: build.mutation({
+            query:(arg) => ({
+                url: 'cards/grade',
+                method: 'PUT',
+                data: {...arg}
+            }),
+            invalidatesTags: ['Cards'],
         })
     })
 });
@@ -87,4 +99,5 @@ export const {
     useCreateNewCardMutation,
     useDeleteCardMutation,
     useEditCardMutation,
+    useSetCardGradeMutation,
 } = cardsApi;

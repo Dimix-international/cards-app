@@ -148,11 +148,17 @@ export const _authApi = createApi({
             })
         }),
         checkAuthUser: build.mutation<ResponseRegistrationType, void>({
-            query: (arg) => ({
+            query: () => ({
                 url: 'auth/me',
                 method: 'POST',
-                data: arg
             }),
+        }),
+        updateProfileUser: build.mutation<ResponseRegistrationType, {name:string, avatar:string}>({
+            query:(arg) => ({
+                url: 'auth/me',
+                method: 'PUT',
+                data: arg,
+            })
         }),
         makeLoginUser: build.mutation<ResponseLoginizationType, {
             email: string, password: string, rememberMe: boolean
@@ -176,6 +182,7 @@ export const {
     useCreateNewPasswordMutation,
     useForgotPasswordMutation,
     useCheckAuthUserMutation,
+    useUpdateProfileUserMutation,
     useMakeLoginUserMutation,
     useLogOutUserMutation,
 } = _authApi;

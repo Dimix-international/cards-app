@@ -85,12 +85,10 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         const {
             data,
             isLoading,
-            isFetching,
             isError,
         } = useGetCardsOfPackQuery(queryParams, {
             skip: !isAuth,
         });
-
         const [createCard] = useCreateNewCardMutation();
         const [updatePacksList] = useLazyGetAllPacksQuery();
         const [deleteCard] = useDeleteCardMutation();
@@ -210,7 +208,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         return (
             <>
                 {
-                    isLoading || isFetching
+                    isLoading
                         ? <Loader/>
                         : <div className={s.container}>
                             <div className={s.header}>

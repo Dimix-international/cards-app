@@ -10,6 +10,7 @@ import {packListApi} from "../m3-dal/pack-list-api";
 import {cardsApi} from "../m3-dal/cards-api";
 import {packListReducer} from "./a1-pakcList/packListReducer";
 import {appReducer} from "./app-reducer";
+import {learnPackReducer} from "./a2-learnPack/learnPackReducer";
 
 
 export const AppRootReducer = combineReducers({
@@ -17,6 +18,7 @@ export const AppRootReducer = combineReducers({
     recoveryPassword: recoveryPassReducer,
     app: appReducer,
     packList: packListReducer,
+    learningPack: learnPackReducer,
     [_authApi.reducerPath] : _authApi.reducer,
     [packListApi.reducerPath] : packListApi.reducer,
     [cardsApi.reducerPath] : cardsApi.reducer,

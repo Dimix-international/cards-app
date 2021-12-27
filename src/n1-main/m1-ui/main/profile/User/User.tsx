@@ -31,7 +31,7 @@ export const User = () => {
     return (
         <>
             <div className={s.container}>
-                <div className={s.image}>
+                <div title={'aaa'} className={s.image}>
                     {
                         user.avatar
                             ? <img src={user.avatar} alt=""/>
