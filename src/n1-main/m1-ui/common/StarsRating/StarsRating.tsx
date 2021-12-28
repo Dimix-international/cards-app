@@ -3,7 +3,7 @@ import s from './StarsRating.module.scss'
 import {setRatingActiveWidth} from "./count-width-active-start";
 
 type StarsRatingType = {
-    rating: number
+    grade: number
     setStarsRating?: (stars:number) => void
     isChangeRating?: boolean
 }
@@ -14,8 +14,7 @@ type RatingStarType = {
 }
 export const StarsRating:FC<StarsRatingType> = (props) => {
 
-    const {rating, setStarsRating, isChangeRating} = props;
-
+    const {grade, setStarsRating, isChangeRating} = props;
     const ratingStars:Array<RatingStarType> = [
         {
             id: '1',
@@ -46,35 +45,35 @@ export const StarsRating:FC<StarsRatingType> = (props) => {
     const ratingActiveRef = useRef<HTMLDivElement | null>(null);
 
 
-    const onMouseEnterHandle = (e:MouseEvent<HTMLInputElement>) => {
-        /*if(isChangeRating) {
+/*    const onMouseEnterHandle = (e:MouseEvent<HTMLInputElement>) => {
+        /!*if(isChangeRating) {
             if(ratingActiveRef.current) {
                 ratingActiveRef.current.style.width = `${setRatingActiveWidth(Number(e.currentTarget.value))}%`
             }
-        }*/
+        }*!/
         if(ratingActiveRef.current) {
             ratingActiveRef.current.style.width = `${setRatingActiveWidth(Number(e.currentTarget.value))}%`
         }
     }
     const onMouseLeaveHandle = (e:MouseEvent<HTMLInputElement>) => {
-        /*if(isChangeRating) {
+        /!*if(isChangeRating) {
             if(ratingActiveRef.current) {
                 ratingActiveRef.current.style.width = `${setRatingActiveWidth(rating)}%`
             }
-        }*/
+        }*!/
         if(ratingActiveRef.current) {
             ratingActiveRef.current.style.width = `${setRatingActiveWidth(rating)}%`
         }
-    }
+    }*/
     const setRating = (e:MouseEvent<HTMLInputElement>) => {
         setStarsRating && setStarsRating(Number(e.currentTarget.value))
     }
 
     useEffect(() =>{
         if(ratingActiveRef.current) {
-            ratingActiveRef.current.style.width = `${setRatingActiveWidth(rating)}%`
+            ratingActiveRef.current.style.width = `${setRatingActiveWidth(grade)}%`
         }
-    },[rating])
+    },[grade])
 
     return (
         <div className={s.wrapper}>
@@ -131,8 +130,8 @@ export const StarsRating:FC<StarsRatingType> = (props) => {
                                             key={star.id}
                                             className={s.rating__item}
                                             type="radio"
-                                            onMouseEnter={onMouseEnterHandle}
-                                            onMouseLeave={onMouseLeaveHandle}
+                                            /*onMouseEnter={onMouseEnterHandle}
+                                            onMouseLeave={onMouseLeaveHandle}*/
                                             onClick={setRating}
                                             {...star}
                                         />

@@ -15,7 +15,7 @@ export type CardType = {
     type: string
     updated: string
     user_id: string
-    __v: number
+    __v: number,
     _id: string
     answerImg?: null | string
     answerVideo?: null | string
@@ -83,7 +83,7 @@ export const cardsApi = createApi({
             }),
             invalidatesTags: ['Cards'],
         }),
-        setCardGrade: build.mutation({
+        setCardGrade: build.mutation<void, {grade: number, card_id: string}>({
             query:(arg) => ({
                 url: 'cards/grade',
                 method: 'PUT',

@@ -7,10 +7,15 @@ body {
     -moz-osx-font-smoothing: grayscale;
     min-height: 100%;
 }
+.error {
+    font-size: 1.2rem;
+}
 .error ,.initError {
     color: #ad0101;
-    font-size: 2rem;
     text-align: center;
+}
+.initError {
+    font-size: 2rem;
 }
 .App {
     height: 100%;

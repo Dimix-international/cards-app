@@ -9,9 +9,16 @@ const slice = createSlice({
     reducers: {
         setLearningCards(state, action:PayloadAction<Array<CardType>>) {
             return {...state, cards: [...action.payload]}
+        },
+        setGradeOfCard(state, action:PayloadAction<{cardId: string, grade:number}>) {
+
+            const id = state.cards.findIndex(card => card._id === action.payload.cardId);
+            if(id > -1) {
+                state.cards[id].grade = action.payload.grade
+            }
         }
     }
 })
 
 export const learnPackReducer = slice.reducer;
-export const {setLearningCards} = slice.actions;
+export const {setLearningCards, setGradeOfCard} = slice.actions;

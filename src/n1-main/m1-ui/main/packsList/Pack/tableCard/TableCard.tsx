@@ -129,7 +129,7 @@ export const TableCard: React.FC<TableType> = ({
                                             {
                                                 cell.column.Header === 'Grade'
                                                 ? <StarsRating
-                                                        rating={data[indexRow].rating}
+                                                        grade={data[indexRow].grade}
                                                         isChangeRating={row.original.user_id === String(userId)}
                                                     />
                                                 : cell.render('Cell')

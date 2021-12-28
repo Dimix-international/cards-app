@@ -32,7 +32,12 @@ table td {
     font-size: 1.3rem;
     padding: 10px;
     max-width: 270px;
-    word-wrap: break-word;
+    /*word-wrap: break-word;*/
+
+    div {
+        max-height: 80px;
+        overflow: hidden;
+    }
 }
 
 .buttons {

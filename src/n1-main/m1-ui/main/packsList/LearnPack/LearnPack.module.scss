@@ -1,4 +1,5 @@
 .container {
+  max-width: 600px;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
@@ -33,6 +34,7 @@
   column-gap: 10px;
 }
 .btn {
+  flex: 1 1 auto;
   height: 45px;
   font-size: 1.5rem;
   display: flex;
@@ -41,9 +43,60 @@
   cursor: pointer;
 }
 .cancel {
+  flex: 0 1 40%;
   background-color: #b8b7b7;
   color: darkblue;
   &:hover{
     background-color: #a09e9e;
   }
+}
+
+
+.titleRate {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.rate {
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+}
+
+.label {
+  cursor: pointer;
+}
+.radio {
+  display: none;
+}
+.radioText {
+  position: relative;
+  font-size: 1.2rem;
+  line-height: 25px;
+  padding-left: 35px;
+  &:before{
+    content: '';
+    display: block;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #0a0a65;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  &:after{
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    top:5px;
+    background-color: #0a0a65;
+    opacity: 0;
+  }
+}
+.radio:checked ~ .radioText:after {
+  opacity: 1;
 }

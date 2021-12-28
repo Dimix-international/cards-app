@@ -3,7 +3,7 @@ import s from "../LearnPack.module.scss";
 import SuperButton from "../../../../common/SuperButton/SuperButton";
 
 type QuestionCardType = {
-    question: string | null | undefined
+    question: string | undefined
     finishLearn: () => void
     showAnswer: () => void
 }

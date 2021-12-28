@@ -170,7 +170,7 @@ export const Table: React.FC<TableType> = ({
                                             </td>
                                         }
                                         return <td {...cell.getCellProps()}>
-                                            {cell.render('Cell')}
+                                            <div>{cell.render('Cell')}</div>
                                         </td>
                                     })
                                 }
