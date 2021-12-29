@@ -1,5 +1,10 @@
 import s from './LearnPack.module.scss'
-import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {
+    Navigate,
+    useLocation,
+    useNavigate,
+    useSearchParams
+} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 import {
     CardType,
@@ -43,8 +48,15 @@ export const LearnPack = () => {
         skip: !isAuth,
     });
 
-    const [updatePacksList, {isFetching: isFetchingUpdatePack}] = useLazyGetAllPacksQuery();
-    const [updateGradesOfCards] = useSetCardGradeMutation();
+    const [updatePacksList, {
+        isFetching: isFetchingUpdatePack,
+        isSuccess: isSuccessUpdatePack,
+    }] = useLazyGetAllPacksQuery();
+
+    const [updateGradesOfCards, {
+        isLoading: isLoadingUpdateCardGrade,
+        isSuccess: isSuccessUpdateCardGrade,
+    }] = useSetCardGradeMutation();
 
     const [card, setCard] = useState<CardType>({
         answer: '',
@@ -67,27 +79,28 @@ export const LearnPack = () => {
         questionVideo: null,
     });
 
-
     const finishLearn = useCallback(async () => {
+
         await learningCardsOfPack.forEach(card => {
-             updateGradesOfCards({grade: card.grade, card_id: card._id})
+            updateGradesOfCards({grade: card.grade, card_id: card._id})
         })
 
-        await updatePacksList({...queryParamsPacksList})
-        navigate(-1)
-    }, [navigate, queryParamsPacksList, updatePacksList, learningCardsOfPack, updateGradesOfCards])
+        await updatePacksList({...queryParamsPacksList});
+
+    }, [
+        queryParamsPacksList, updatePacksList,
+        learningCardsOfPack, updateGradesOfCards,
+    ])
 
     const showAnswer = useCallback(() => {
         setIsShowQuestion(false)
     }, [])
 
     const showNextQuestion = useCallback((prevGrade: number) => {
-        debugger
         dispatch(setGradeOfCard({cardId: card._id, grade: prevGrade}))
         setIsShowQuestion(true)
 
     }, [dispatch, card]);
-
 
     useEffect(() => {
         if (isSuccess) {
@@ -96,17 +109,21 @@ export const LearnPack = () => {
     }, [data?.cards, dispatch, isSuccess])
 
     useEffect(() => {
-        if (learningCardsOfPack.length && isSuccess){
+        if (learningCardsOfPack.length && isSuccess) {
             setCard(getCard(learningCardsOfPack))
         }
     }, [learningCardsOfPack, isSuccess])
+
+    useEffect(() => {
+        isSuccessUpdateCardGrade && isSuccessUpdatePack && navigate(-1)
+    },[isSuccessUpdateCardGrade,isSuccessUpdatePack, navigate ])
 
 
     return (
         <>
             {
-                isLoading || isFetchingUpdatePack
-                    ? <Loader/>
+                isLoading || isLoadingUpdateCardGrade || isFetchingUpdatePack
+                    ? <Loader />
                     : <div className={s.container}>
                         <h1 className={s.title}>{`Learn '${packName}'`}</h1>
                         {

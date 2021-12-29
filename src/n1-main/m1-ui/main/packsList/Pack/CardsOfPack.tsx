@@ -51,6 +51,7 @@ const selectOptions: Array<OptionsSelectType> = [
     },
 ]
 type PackType = {}
+
 export const CardsOfPack: React.FC<PackType> = React.memo(props => {
 
         const [searchParams, setSearchParams] = useSearchParams();

@@ -22,6 +22,11 @@ export type CardType = {
     questionImg?: null | string
     questionVideo?: null | string
 }
+type UpdateGradeCardType = {
+    token: string
+    tokenDeathTime: number
+    updatedGrade: CardType
+}
 type ResponseGetCard = {
     cards: Array<CardType>
     cardsTotalCount: number
@@ -83,7 +88,7 @@ export const cardsApi = createApi({
             }),
             invalidatesTags: ['Cards'],
         }),
-        setCardGrade: build.mutation<void, {grade: number, card_id: string}>({
+        setCardGrade: build.mutation<UpdateGradeCardType, {grade: number, card_id: string}>({
             query:(arg) => ({
                 url: 'cards/grade',
                 method: 'PUT',

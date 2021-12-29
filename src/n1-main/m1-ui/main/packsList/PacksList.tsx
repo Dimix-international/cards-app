@@ -153,7 +153,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     }, [dispatch]);
 
 
-    const createUpdatePackHandler = useCallback(async (name: string) => {
+    const createPackHandler = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
         try {
 
@@ -327,7 +327,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
                             {
                                 triggerModal === 'addPack'
                                     ? <AddEditPackModal
-                                        setNewTitlePack={createUpdatePackHandler}
+                                        setNewTitlePack={createPackHandler}
                                         openCloseModalWindow={openCloseModalWindow}
                                         title={'Add new pack'}
                                         trigger={'addPack'}

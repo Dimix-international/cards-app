@@ -1,15 +1,21 @@
 import React, {ChangeEvent, useState} from "react";
 import s from '../Pack/AddEditCardModal/AddEditCardModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
-import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
+import {ModalTriggerType, setAppStatus} from "../../../../m2-bll/app-reducer";
 import PersonIcon from "@mui/icons-material/Person";
 import s2 from './EditProfileModal.module.scss'
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import {convertBase64} from "../../../../../utils/convertBase64";
+import {CircularProgress} from "@mui/material";
+import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
+import {
+    handleServerNetworkAppError
+} from "../../../../../utils/error_utils";
 
 type InfoProfileType = {
     nickName: string,
     email: string
-    avatar:string | undefined
+    avatar: string | undefined
 }
 type EditProfileModalType = {
     setNewTitlePack?: (name: string) => void
@@ -20,7 +26,7 @@ type EditProfileModalType = {
 }
 type TempValueStateType = {
     nickName: string,
-    avatar:string
+    avatar: string
 }
 export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props => {
 
@@ -30,10 +36,11 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
         avatar: infoProfile.avatar || '',
     });
 
+    const dispatch = useAppDispatch();
+    const statusLoading = useAppSelector(state => state.app.status)
+
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-       /* e.currentTarget.dataset.name && e.currentTarget.dataset.name === 'nickName'
-            ? setTempValue({...tempValue, question: e.currentTarget.value})
-            : setTempValue({...tempValue, answer: e.currentTarget.value})*/
+        setTempValue({...tempValue, nickName: e.currentTarget.value})
     }
 
     const sendNewValuesCard = () => {
@@ -45,7 +52,28 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
     }
     const closeModalWindow = () => {
         openCloseModalWindow(false, trigger)
+        setTempValue({
+            nickName: '',
+            avatar: '',
+        });
     }
+
+    const changeFileHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.currentTarget.files) {
+
+            dispatch(setAppStatus('loading'));
+            const file = e.currentTarget.files[0];
+
+            try {
+                const base64 = await convertBase64(file);
+                setTempValue({...tempValue, avatar: base64 as string})
+                dispatch(setAppStatus('succeeded'));
+            } catch (e) {
+                handleServerNetworkAppError(dispatch)
+            }
+        }
+    }
+
     return (
         <div className={s.container}>
             <div className={s.top}>
@@ -56,16 +84,21 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                 <div className={s2.avatar}>
                     <div className={s2.avatar__container}>
                         {
-                        infoProfile.avatar
-                            ? <img src={infoProfile.avatar} alt=""/>
-                            : <PersonIcon className={s2.unknown}/>
-                    }
+                            statusLoading === 'loading' &&
+                            <CircularProgress className={s2.loadingImg}/>
+                        }
+                        {
+                            tempValue.avatar
+                                ? <img src={tempValue.avatar} alt=""/>
+                                : <PersonIcon className={s2.unknown}/>
+                        }
                         <label htmlFor={'file'} className={s2.addPhoto}>
                             <input
                                 id={'file'}
                                 type="file"
                                 name={'file'}
                                 className={s2.btnFile}
+                                onChange={changeFileHandler}
                             />
                             <AddAPhotoIcon style={{
                                 fontSize: '40px',

@@ -32,7 +32,7 @@ export const QuestionCard: React.FC<QuestionCardType> = React.memo((props) => {
                     className={`${s.btn} ${s.cancel}`}
                     onClick={stopLearning}
                 >
-                    Cancel
+                    Finish
                 </SuperButton>
                 <SuperButton
                     className={`${s.btn} ${s.save}`}

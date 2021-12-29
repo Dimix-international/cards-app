@@ -15,7 +15,7 @@ import {
     useCheckAuthUserMutation
 } from "../m3-dal/auth-api";
 import {Loader} from "./common/Loader/Loader";
-import {useAppDispatch} from "../../hook/redux";
+import {useAppDispatch, useAppSelector} from "../../hook/redux";
 import {setAppIsAuth} from "../m2-bll/app-reducer";
 import {setUser} from "../m2-bll/loginization-reducer";
 import {CardsOfPack} from "./main/packsList/Pack/CardsOfPack";
@@ -31,6 +31,7 @@ export const App = () => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const isAuth = useAppSelector(state => state.app.isAuthUser);
 
     useEffect(() => {
         checkAuthUser().unwrap()
@@ -41,7 +42,7 @@ export const App = () => {
             .catch(error => {
                 navigate('/login', {replace: true});
             })
-    }, [])
+    }, [isAuth])
 
     const finallyError = useMemo(() => {
         return errorAuthUser
