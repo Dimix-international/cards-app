@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useState} from "react";
 import s from '../Pack/AddEditCardModal/AddEditCardModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
-import {ModalTriggerType, setAppStatus} from "../../../../m2-bll/app-reducer";
+import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
 import PersonIcon from "@mui/icons-material/Person";
 import s2 from './EditProfileModal.module.scss'
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
@@ -9,9 +9,18 @@ import {convertBase64} from "../../../../../utils/convertBase64";
 import {CircularProgress} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 
+import {useForm} from "react-hook-form";
+
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup'
-import {useForm} from "react-hook-form";
+import {
+    useCreateNewPackMutation,
+    useLazyGetAllPacksQuery
+} from "../../../../m3-dal/pack-list-api";
+import {
+    useCheckAuthUserMutation,
+    useUpdateProfileUserMutation
+} from "../../../../m3-dal/auth-api";
 
 
 type InfoProfileType = {
@@ -20,27 +29,33 @@ type InfoProfileType = {
     avatar: string | undefined
 }
 type EditProfileModalType = {
-    setNewTitlePack?: (name: string) => void
+    updateProfileInfo: (nickName: string, avatar:string) => void
     openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
     infoProfile: InfoProfileType
     trigger: ModalTriggerType
 
 }
+
 type TempValueStateType = {
     nickName: string,
     avatar: string
 }
 
+const types = ['image/png', 'image/jpeg']
 const dataValidationSchema = yup.object({
-    nickName: yup.string().required().min(3),
+    nickName: yup.string().min(3, 'At least 3 symbol!').max(20, 'Max 20 symbol!'),
     avatar: yup.mixed().test('type', 'only jpeg', (value) => {
-        return value && value[0].type === 'image/jpeg'
+        if (value === '' || typeof value === "string") {
+            return true
+        }
+        const index = types.findIndex(v => v === value[0].type)
+        return index > -1;
     })
 })
 
 export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props => {
 
-    const {openCloseModalWindow, infoProfile, trigger} = props;
+    const {openCloseModalWindow, infoProfile, trigger, updateProfileInfo} = props;
 
     const [tempValue, setTempValue] = useState<TempValueStateType>({
         nickName: infoProfile.nickName,
@@ -59,31 +74,27 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
             nickName: infoProfile.nickName,
             avatar: infoProfile.avatar || '',
         },
-        resolver: yupResolver(dataValidationSchema),
+        resolver: yupResolver(dataValidationSchema)
     });
 
-    const dispatch = useAppDispatch();
-    const statusLoading = useAppSelector(state => state.app.status)
-
-    const onChangeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-        /*setTempValue({...tempValue, nickName: e.currentTarget.value})*/
-    }
-
     const sendNewValuesCard = async (data: any) => {
-        console.log(data)
 
-        if (data.avatar[0]) {
-            const base64 = await convertBase64(data.avatar[0]);
-            setTempValue({...tempValue, avatar: base64 as string})
+        try {
+            if (typeof data.avatar === 'string') {
+                await updateProfileInfo( data.nickName,data.avatar);
+            } else {
+                if (data.avatar[0]) {
+                    const base64 = await convertBase64(data.avatar[0]);
+                    await updateProfileInfo( data.nickName,base64 as string);
+                } else {
+                    await updateProfileInfo( data.nickName,'');
+                }
+            }
+        } catch (e) {
+
         }
-
-
-        /*setNewCard(tempValue.id, tempValue.question, tempValue.answer);*/
-        /*        setTempValue({
-                    nickName: '',
-                    avatar: '',
-                });*/
     }
+
     const closeModalWindow = () => {
         openCloseModalWindow(false, trigger)
         /*        setTempValue({
@@ -92,18 +103,14 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                 });*/
     }
 
-    const changeFileHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-
-        if (e.currentTarget.files) {
-
-            //   dispatch(setAppStatus('loading'));
-            const file = e.currentTarget.files[0];
-
+    const changeFileHandler = async () => {
+        const values = getValues();
+        const avatarValue = values.avatar[0];
+        if (avatarValue) {
             try {
-
-                const base64 = await convertBase64(file);
+                //@ts-ignore
+                const base64 = await convertBase64(avatarValue);
                 setTempValue({...tempValue, avatar: base64 as string})
-                dispatch(setAppStatus('succeeded'));
             } catch (e) {
                 /*  handleServerNetworkAppError(dispatch)*/
             }
@@ -117,14 +124,11 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                 <span onClick={closeModalWindow}>X</span>
             </div>
             <form
-                onSubmit={handleSubmit(sendNewValuesCard)}> {/*// handleSubmit передает данные из формы, sendNewValuesCard обработается, если в форме нету ошибок*/}
+                onSubmit={handleSubmit(sendNewValuesCard)}
+                onChange={changeFileHandler}> {/*// handleSubmit передает данные из формы, sendNewValuesCard обработается, если в форме нету ошибок*/}
                 <div className={s.body}>
                     <div className={s2.avatar}>
                         <div className={s2.avatar__container}>
-                            {
-                                statusLoading === 'loading' &&
-                                <CircularProgress className={s2.loadingImg}/>
-                            }
                             {
                                 tempValue.avatar
                                     ? <img src={tempValue.avatar} alt=""/>
@@ -134,12 +138,7 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                                 <input
                                     id={'file'}
                                     type="file"
-                                    {...register('avatar', {
-                                        validate: {
-                                            type: value => value && value === 'image/jpeg'
-                                        }
-                                    })}
-                                    onChange={changeFileHandler}
+                                    {...register('avatar')}
                                     className={s2.btnFile}
                                 />
                                 <AddAPhotoIcon style={{
@@ -157,16 +156,7 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                     }
                     <p>Nickname</p>
                     <input
-                        {...register('nickName', {
-                            minLength: {
-                                value: 5,
-                                message: 'At least three symbol!'
-                            },
-                            maxLength: {
-                                value: 20,
-                                message: 'Max 20 symbol!'
-                            },
-                        })}
+                        {...register('nickName')}
                     />
                     {
                         errors?.nickName

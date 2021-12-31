@@ -25,11 +25,15 @@ import {
 import {Modal} from "../../common/Modal/Modal";
 import {AddEditPackModal} from "./AddEditPackModal/AddEditPackModal";
 import {DeleteModalWindow} from "./DeletePackModal/DeleteModalWindow";
-import {FinallyErrorResponseType} from "../../../m3-dal/auth-api";
+import {
+    FinallyErrorResponseType, useCheckAuthUserMutation,
+    useUpdateProfileUserMutation
+} from "../../../m3-dal/auth-api";
 import {AxiosResponse} from "axios";
 import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
 import {User} from "../profile/User/User";
 import {EditProfileModal} from "./EditProfileModal/EditProfileModal";
+import {setUser} from "../../../m2-bll/loginization-reducer";
 
 
 export type OptionsSelectType = {
@@ -97,6 +101,8 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const [createPack] = useCreateNewPackMutation();
     const [deletePack] = useDeletePackMutation();
     const [updatePack] = useUpdatePackMutation();
+    const [updateProfile] = useUpdateProfileUserMutation();
+    const [checkAuthUser] = useCheckAuthUserMutation();
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
@@ -173,6 +179,20 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
             dispatch(setAppStatus('failed'));
         }
     }, [createPack, dispatch, navigate]);
+
+    const updateProfileInfo = useCallback(async (nickName: string,
+                                                 avatar: string) => {
+        dispatch(setAppStatus('loading'));
+        try {
+            await updateProfile({name: nickName, avatar: avatar});
+            const response = await checkAuthUser().unwrap();
+            dispatch(setUser(response))
+            dispatch(setIsOpenedModal(false));
+            dispatch(setAppStatus('succeeded'));
+        } catch (e) {
+            dispatch(setAppStatus('failed'));
+        }
+    }, [dispatch, updateProfile, checkAuthUser]);
 
     const updatePackHandler = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
@@ -356,6 +376,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
                                                     avatar: avatarUser,
                                                 }}
                                                 trigger={'editProfile'}
+                                                updateProfileInfo={updateProfileInfo}
                                             />
                                             : false
                             }

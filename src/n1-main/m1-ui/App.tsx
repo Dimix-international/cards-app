@@ -42,7 +42,7 @@ export const App = () => {
             .catch(error => {
                 navigate('/login', {replace: true});
             })
-    }, [isAuth])
+    }, [isAuth, checkAuthUser])
 
     const finallyError = useMemo(() => {
         return errorAuthUser

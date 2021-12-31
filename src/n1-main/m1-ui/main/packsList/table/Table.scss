@@ -13,6 +13,7 @@ table tr:nth-child(even) {
 }
 .tdLink {
     color: inherit;
+    word-break: break-word;
 }
 /*table tr:hover {background-color: #eeecec;}*/
 
