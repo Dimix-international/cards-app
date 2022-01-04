@@ -17,7 +17,6 @@ import {
     setGradeOfCard,
     setLearningCards
 } from "../../../../m2-bll/a2-learnPack/learnPackReducer";
-import SuperButton from "../../../common/SuperButton/SuperButton";
 import {useLazyGetAllPacksQuery} from "../../../../m3-dal/pack-list-api";
 import {QuestionCard} from "./Question/QuestionCard";
 import {AnswerWithRate} from "./AnswerWithRate/AnswerWithRateCard";
@@ -33,6 +32,7 @@ export const LearnPack = () => {
     const packName = location.state.packName;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+
 
     const learningCardsOfPack = useAppSelector(state => state.learningPack.cards)
 
@@ -82,14 +82,15 @@ export const LearnPack = () => {
     const finishLearn = useCallback(async () => {
 
         await learningCardsOfPack.forEach(card => {
-            updateGradesOfCards({grade: card.grade, card_id: card._id})
+            card.grade > 0 && updateGradesOfCards({grade: card.grade, card_id: card._id})
         })
 
         await updatePacksList({...queryParamsPacksList});
+        navigate(-1)
 
     }, [
         queryParamsPacksList, updatePacksList,
-        learningCardsOfPack, updateGradesOfCards,
+        learningCardsOfPack, updateGradesOfCards, navigate
     ])
 
     const showAnswer = useCallback(() => {
@@ -129,13 +130,12 @@ export const LearnPack = () => {
                         {
                             isShowQuestion
                                 ? <QuestionCard
-                                    question={card.question}
+                                    card={card}
                                     finishLearn={finishLearn}
                                     showAnswer={showAnswer}
                                 />
                                 : <AnswerWithRate
-                                    question={card.question}
-                                    answer={card.answer}
+                                    card={card}
                                     finishLearn={finishLearn}
                                     nextQuestion={showNextQuestion}
                                 />

@@ -11,6 +11,7 @@ import {cardsApi} from "../m3-dal/cards-api";
 import {packListReducer} from "./a1-pakcList/packListReducer";
 import {appReducer} from "./app-reducer";
 import {learnPackReducer} from "./a2-learnPack/learnPackReducer";
+import {fileApi} from "../m3-dal/file-api";
 
 
 export const AppRootReducer = combineReducers({
@@ -22,6 +23,7 @@ export const AppRootReducer = combineReducers({
     [_authApi.reducerPath] : _authApi.reducer,
     [packListApi.reducerPath] : packListApi.reducer,
     [cardsApi.reducerPath] : cardsApi.reducer,
+    [fileApi.reducerPath] : fileApi.reducer,
 });
 
 export type AppRootStateType = ReturnType<typeof AppRootReducer>;
@@ -31,7 +33,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
         _authApi.middleware,
         packListApi.middleware,
-        cardsApi.middleware
+        cardsApi.middleware,
+        fileApi.middleware
     )
 })
 

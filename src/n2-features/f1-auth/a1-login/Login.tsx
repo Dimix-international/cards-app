@@ -9,7 +9,7 @@ import {loginValidation} from "./utils/validationSettings";
 import {NavLink, useNavigate} from "react-router-dom";
 import s from './Login.module.css'
 import {
-    FinallyErrorResponseType,
+    FinallyErrorResponseType, useCheckAuthUserMutation,
     useMakeLoginUserMutation
 } from "../../../n1-main/m3-dal/auth-api";
 import {useAppDispatch} from "../../../hook/redux";
@@ -23,6 +23,7 @@ type InitialValuesType = {
 export const Login: FC = () => {
 
     const [makeLogin, {error: errorLoginization}] = useMakeLoginUserMutation();
+    const [checkAuthUser] = useCheckAuthUserMutation();
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ export const Login: FC = () => {
         dispatch(setAppStatus('loading'));
         try {
             await makeLogin(values).unwrap();
+            await checkAuthUser();
             dispatch(setAppIsAuth(true))
             dispatch(setAppStatus('succeeded'));
             navigate('/packs-list', {replace: true})

@@ -35,6 +35,10 @@ export type CardInfoType = {
     id: string,
     question: string,
     answer: string,
+    answerImg?: null | string
+    answerVideo?: null | string
+    questionImg?: null | string
+    questionVideo?: null | string
 }
 const selectOptions: Array<OptionsSelectType> = [
     {
@@ -249,7 +253,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                                                     <TableCard
                                                         data={data?.cards || []}
                                                         sortData={sortData}
-                                                        isOwnerCard={packInfo.userIdPack === String(userId)}
+                                                        isOwnerCard={packInfo.userIdPack === userId}
                                                         updateSort={queryParams.sortCards}
                                                         openModalWindow={openCloseModalWindow}
                                                     />

@@ -42,7 +42,7 @@ export const App = () => {
             .catch(error => {
                 navigate('/login', {replace: true});
             })
-    }, [isAuth, checkAuthUser])
+    }, [])
 
     const finallyError = useMemo(() => {
         return errorAuthUser
@@ -51,6 +51,7 @@ export const App = () => {
     if (isLoading) {
         return <Loader/>
     }
+
     return (
         <div className="App">
             <Routes>

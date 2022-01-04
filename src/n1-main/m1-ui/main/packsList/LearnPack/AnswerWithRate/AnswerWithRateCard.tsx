@@ -1,23 +1,23 @@
 import React, {ChangeEvent, useState} from "react";
 import s from "../LearnPack.module.scss";
 import SuperButton from "../../../../common/SuperButton/SuperButton";
+import {CardType} from "../../../../../m3-dal/cards-api";
 
 
 type AnswerWithRateType = {
-    question: string | null | undefined
-    answer: string | undefined
+    card: CardType
     finishLearn: () => void
     nextQuestion: (prevGrade: number) => void
 }
 type RateType = {
     id: string,
-    value:number,
-    text:string
+    value: number,
+    text: string
 }
-const ratingValue:Array<RateType> = [
+const ratingValue: Array<RateType> = [
     {
         id: '1',
-        value:1,
+        value: 1,
         text: 'Did not know'
     },
     {
@@ -44,9 +44,9 @@ const ratingValue:Array<RateType> = [
 
 export const AnswerWithRate: React.FC<AnswerWithRateType> = React.memo((props) => {
 
-    const {question, answer, finishLearn, nextQuestion} = props;
+    const {card, finishLearn, nextQuestion} = props;
 
-    const[checkedRate, setCheckedRate] = useState(0)
+    const [checkedRate, setCheckedRate] = useState(0)
 
     const stopLearning = () => {
         finishLearn()
@@ -55,17 +55,45 @@ export const AnswerWithRate: React.FC<AnswerWithRateType> = React.memo((props) =
     const showNextQuestion = () => {
         nextQuestion(checkedRate)
     }
-    const setRateHandler = (e:ChangeEvent<HTMLInputElement>) => {
+    const setRateHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setCheckedRate(Number(e.currentTarget.value))
     }
     return (
         <>
             <p className={s.question}>
-                <span>Question:</span>{question}
+                <span>Question:</span>{card.question}
             </p>
+            {
+                (card.questionImg || card.questionVideo) &&
+                <div className={s.fileLearn}>
+                    {
+                        card.questionImg
+                            ? <img src={card.questionImg} alt=""/>
+                            : card.questionVideo
+                            ? <video preload="metadata" controls>
+                                <source src={card.questionVideo}/>
+                            </video>
+                            : false
+                    }
+                </div>
+            }
             <p className={s.question}>
-                <span>Answer:</span>{answer}
+                <span>Answer:</span>{card.answer}
             </p>
+            {
+                (card.answerImg || card.answerVideo) &&
+                <div className={s.fileLearn}>
+                    {
+                        card.answerImg
+                            ? <img src={card.answerImg} alt=""/>
+                            : card.answerVideo
+                            ? <video preload="metadata" controls>
+                                <source src={card.answerVideo}/>
+                            </video>
+                            : false
+                    }
+                </div>
+            }
             <div className={s.rate}>
                 <h2 className={s.titleRate}>Rate yourself:</h2>
                 {

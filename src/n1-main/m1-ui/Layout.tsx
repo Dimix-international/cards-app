@@ -4,7 +4,7 @@ import {Header} from "./header/Header";
 import s from './Layout..module.scss'
 import {Footer} from "./footer/Footer";
 import {FinallyErrorResponseType} from "../m3-dal/auth-api";
-import {Outlet} from 'react-router-dom';
+import {Navigate, Outlet} from 'react-router-dom';
 import {useAppSelector} from "../../hook/redux";
 
 type LayoutType = {
