@@ -14,6 +14,7 @@ import {
 } from "../../../n1-main/m3-dal/auth-api";
 import {useAppDispatch} from "../../../hook/redux";
 import {setAppIsAuth, setAppStatus} from "../../../n1-main/m2-bll/app-reducer";
+import {setUser} from "../../../n1-main/m2-bll/loginization-reducer";
 
 type InitialValuesType = {
     email: string,
@@ -32,7 +33,8 @@ export const Login: FC = () => {
         dispatch(setAppStatus('loading'));
         try {
             await makeLogin(values).unwrap();
-            await checkAuthUser();
+            const user = await checkAuthUser().unwrap();
+            dispatch(setUser(user))
             dispatch(setAppIsAuth(true))
             dispatch(setAppStatus('succeeded'));
             navigate('/packs-list', {replace: true})
@@ -46,7 +48,7 @@ export const Login: FC = () => {
             <span className={s.spanLogo}>Login</span>
             <Formik validationSchema={loginValidation}
                     initialValues={{email: '', password: '', rememberMe: false}}
-                    onSubmit={ (values, formikHelpers: FormikHelpers<InitialValuesType>) => {
+                    onSubmit={(values, formikHelpers: FormikHelpers<InitialValuesType>) => {
                         onSubmitHandler(values)
                             .then(res => {
                                 formikHelpers.setSubmitting(false)

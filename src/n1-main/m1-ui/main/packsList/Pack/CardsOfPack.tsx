@@ -55,13 +55,17 @@ const selectOptions: Array<OptionsSelectType> = [
     },
 ]
 type PackType = {}
+type LocationStateType = {
+    userIdPack:string
+    packName: string;
+}
 
 export const CardsOfPack: React.FC<PackType> = React.memo(props => {
 
         const [searchParams, setSearchParams] = useSearchParams();
         const navigate = useNavigate();
         const location = useLocation();
-        const packInfo = location.state;
+        const packInfo = location.state as LocationStateType;
         const dispatch = useAppDispatch();
 
         const cardId = searchParams.get('cardsPack_id') || ''; //поисковый запрос, || '' -если не найдет
@@ -210,7 +214,8 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             }
         }, [selectedOptionId]);
 
-        return (
+
+    return (
             <>
                 {
                     isLoading
@@ -227,7 +232,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                                     addClass={s.input}
                                 />
                                 {
-                                    packInfo.userIdPack === String(userId) &&
+                                    packInfo.userIdPack === userId &&
                                     <button
                                         className={s.button}
                                         onClick={() => openCloseModalWindow(true, 'addCard')}

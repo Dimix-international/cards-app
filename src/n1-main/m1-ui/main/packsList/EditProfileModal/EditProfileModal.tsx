@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import s from '../Pack/AddEditCardModal/AddEditCardModal.module.scss'
 import SuperButton from "../../../common/SuperButton/SuperButton";
 import {ModalTriggerType} from "../../../../m2-bll/app-reducer";
@@ -30,7 +30,7 @@ type TempValueStateType = {
     avatar: string
 }
 
-const types = ['image/png', 'image/jpeg']
+/*const types = ['image/png', 'image/jpeg']
 const dataValidationSchema = yup.object({
     nickName: yup.string().min(3, 'At least 3 symbol!').max(20, 'Max 20 symbol!'),
     avatar: yup.mixed().test('type', "Invalid file's format!", (value) => {
@@ -40,68 +40,72 @@ const dataValidationSchema = yup.object({
         const index = types.findIndex(v => v === value[0].type)
         return index > -1;
     })
-})
+})*/
 
 export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props => {
 
-    const {
-        openCloseModalWindow,
-        infoProfile,
-        trigger,
-        updateProfileInfo
-    } = props;
+        const {
+            openCloseModalWindow,
+            infoProfile,
+            trigger,
+            updateProfileInfo
+        } = props;
 
-    const [tempValue, setTempValue] = useState<TempValueStateType>({
-        nickName: infoProfile.nickName,
-        avatar: infoProfile.avatar || '',
-    });
-
-    const {
-        register, //позволяет регестрировать поля для формы
-        handleSubmit,
-        formState: {errors},
-        reset, //очистка формы
-        getValues,
-    } = useForm<TempValueStateType>({
-        mode: 'onChange', //режимы валидации
-        defaultValues: {
+        const [tempValue, setTempValue] = useState<TempValueStateType>({
             nickName: infoProfile.nickName,
             avatar: infoProfile.avatar || '',
-        },
-        resolver: yupResolver(dataValidationSchema)
-    });
+        });
 
-    const sendNewValuesCard = async (data: any) => {
+        const {
+            register, //позволяет регестрировать поля для формы
+            handleSubmit,
+            formState: {errors},
+            reset, //очистка формы
+            getValues,
+        } = useForm<TempValueStateType>({
+            mode: 'onChange', //режимы валидации
+            defaultValues: {
+                nickName: infoProfile.nickName,
+                avatar: infoProfile.avatar || '',
+            },
+            /*resolver: yupResolver(dataValidationSchema)*/
+        });
 
-        try {
-            if (typeof data.avatar === 'string') {
-                updateProfileInfo(data.nickName, data.avatar);
-            } else {
-                if (data.avatar[0]) {
-                    const base64 = await convertBase64(data.avatar[0]);
-                    updateProfileInfo(data.nickName, base64 as string);
+        const sendNewValuesCard = async (data: any) => {
+
+            try {
+                if (typeof data.avatar === 'string') {
+                    updateProfileInfo(data.nickName, data.avatar);
                 } else {
-                    updateProfileInfo(data.nickName, '');
+                    if (data.avatar[0]) {
+                        const base64 = await convertBase64(data.avatar[0]);
+                        updateProfileInfo(data.nickName, base64 as string);
+                    } else {
+                        updateProfileInfo(data.nickName, '');
+                    }
+                }
+            } catch (e) {
+
+            }
+        }
+
+        const closeModalWindow = () => {
+            openCloseModalWindow(false, trigger)
+        }
+
+        const changeFileHandler = async (e: FormEvent<HTMLFormElement>) => {
+
+            if (e.currentTarget.id === 'file') {
+                const {avatar} = getValues();
+                const avatarValue = avatar[0];
+                if (avatarValue) {
+                    //@ts-ignore
+                    const base64 = await convertBase64(avatarValue);
+                    setTempValue({...tempValue, avatar: base64 as string})
                 }
             }
-        } catch (e) {
-
         }
-    }
 
-    const closeModalWindow = () => {
-        openCloseModalWindow(false, trigger)
-    }
-
-    const changeFileHandler = async () => {
-        const values = getValues();
-        const avatarValue = values.avatar[0];
-        if (avatarValue) {
-            //@ts-ignore
-            const base64 = await convertBase64(avatarValue);
-            setTempValue({...tempValue, avatar: base64 as string})
-        }
-    }
         return (
             <div className={s.container}>
                 <div className={s.top}>
@@ -123,6 +127,7 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                                     <input
                                         id={'file'}
                                         type="file"
+                                        accept={'.jpg,.jpeg,.png'}
                                         {...register('avatar')}
                                         className={s2.btnFile}
                                     />
@@ -141,7 +146,10 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                         }
                         <p>Nickname</p>
                         <input
-                            {...register('nickName')}
+                            {...register('nickName', {
+                                minLength:3,
+                                maxLength:30,
+                            })}
                         />
                         {
                             errors?.nickName

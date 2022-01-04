@@ -44,7 +44,7 @@ export type CreatePackType = {
 
 export const packListApi = createApi({
     reducerPath: 'packListApi',
-    baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
+    baseQuery: axiosBaseQuery({baseUrl: 'https://neko-back.herokuapp.com/2.0/'}),
     tagTypes: ['Packs'],
     endpoints: (build) => ({
         getAllPacks: build.query<AllCardsType, QueryParamsGetAllCardsType>({

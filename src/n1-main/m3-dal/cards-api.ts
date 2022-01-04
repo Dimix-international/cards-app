@@ -51,7 +51,7 @@ export type QueryParamsGetCardsOfPackType = {
 
 export const cardsApi = createApi({
     reducerPath: 'cardsApi',
-    baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
+    baseQuery: axiosBaseQuery({baseUrl: 'https://neko-back.herokuapp.com/2.0/'}),
     tagTypes: ['Cards'],
     endpoints: (build) => ({
         getCardsOfPack: build.query<ResponseGetCard, QueryParamsGetCardsOfPackType>({

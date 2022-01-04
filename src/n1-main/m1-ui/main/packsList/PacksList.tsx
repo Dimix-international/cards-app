@@ -89,6 +89,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const {
         data: allCards,
         isLoading,
+        isFetching,
         error: errorGettingPacks
     } = useGetAllPacksQuery({
         ...queryParams,

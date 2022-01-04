@@ -82,7 +82,7 @@ export type AllCardsType = {
 
 export const axiosBaseQuery =
     (
-        {baseUrl}: { baseUrl: string, } = {baseUrl: ''}
+        {baseUrl}: { baseUrl: string, } = {baseUrl: 'https://neko-back.herokuapp.com/2.0/'}
     ): BaseQueryFn<{
         url: string
         method: AxiosRequestConfig['method'],
@@ -111,11 +111,11 @@ export const axiosBaseQuery =
                 }
             }
         }
-
+//https://neko-back.herokuapp.com/2.0/'
 export const _authApi = createApi({
     reducerPath: 'authApi',
     /*baseQuery: fetchBaseQuery({baseUrl: 'http://localhost:7542/2.0/', credentials:'include'}), //include, omit, same-origin*/
-    baseQuery: axiosBaseQuery({baseUrl: 'http://localhost:7542/2.0/'}),
+    baseQuery: axiosBaseQuery({baseUrl: 'https://neko-back.herokuapp.com/2.0/'}),
     endpoints: (build) => ({
         registrationAuth: build.mutation<void, { email: string, password: string }>({
             query: (arg,) => ({
@@ -133,7 +133,7 @@ export const _authApi = createApi({
         }),
         forgotPassword: build.mutation<void, { email: string }>({
             query: (arg) => ({
-                url: 'https://neko-back.herokuapp.com/2.0/auth/forgot',
+                url: 'auth/forgot',
                 method: 'POST',
                 data: {
                     email: arg.email,

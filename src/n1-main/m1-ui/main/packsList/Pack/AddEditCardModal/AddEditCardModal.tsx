@@ -10,6 +10,7 @@ import * as yup from "yup";
 import {convertBase64} from "../../../../../../utils/convertBase64";
 import {ImgVideoAudio} from "./ImgVideoAudio";
 
+/*
 const types = ['image/png', 'image/jpeg', 'image/svg+xml', 'video/mp4', 'video/ogg',
     'video/webm'];
 //'audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg'
@@ -34,6 +35,7 @@ const dataValidationSchema = yup.object({
         return index > -1;
     })
 })
+*/
 
 type AddNewCardModalType = {
     setNewCard: (id: string, question: string, answer: string) => void
@@ -84,7 +86,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
             fileQuestion: cardInfo?.questionImg || cardInfo?.questionVideo || '',
             fileAnswer: cardInfo?.answerImg || cardInfo?.answerVideo || '',
         },
-        resolver: yupResolver(dataValidationSchema)
+        /*resolver: yupResolver(dataValidationSchema)*/
     });
 
     const sendNewValuesCard = (data: CardInfoType & FilesType) => {
@@ -157,7 +159,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     <input
                         {...register('question')}
                     />
-                    <ImgVideoAudio file={files.fileQuestion} />
+                    <ImgVideoAudio file={files.fileQuestion}/>
                     <div className={s.containerLabel}>
                         <label className={s.fileLabel} htmlFor="fileQuestion">
                             <p>+ Attach file</p>
@@ -166,6 +168,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                                 id={'fileQuestion'}
                                 {...register('fileQuestion')}
                                 data-name={'question'}
+                                accept={'.jpg,.jpeg,.png,.svg+xml,.mp4,.ogg,.webm'}
                             />
                         </label>
                         {
@@ -186,9 +189,11 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     {/*-----------*/}
                     <p>Answer</p>
                     <input
-                        {...register('answer')}
+                        {...register('answer', {
+                            minLength:1,
+                        })}
                     />
-                    <ImgVideoAudio file={files.fileAnswer} />
+                    <ImgVideoAudio file={files.fileAnswer}/>
                     <div className={s.containerLabel}>
                         <label className={s.fileLabel} htmlFor="fileAnswer">
                             <p>+ Attach file</p>
@@ -197,6 +202,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                                 id={'fileAnswer'}
                                 {...register('fileAnswer')}
                                 data-name={'answer'}
+                                accept={'.jpg,.jpeg,.png,.svg+xml,.mp4,.ogg,.webm'}
                             />
                         </label>
                         {
