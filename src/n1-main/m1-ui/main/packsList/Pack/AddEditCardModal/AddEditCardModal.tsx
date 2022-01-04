@@ -157,7 +157,12 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                 <div className={s.body}>
                     <p>Question</p>
                     <input
-                        {...register('question')}
+                        {...register('question', {
+                            minLength: {
+                                value:1,
+                                message: 'Empty field!'
+                            }
+                        })}
                     />
                     <ImgVideoAudio file={files.fileQuestion}/>
                     <div className={s.containerLabel}>
@@ -190,7 +195,10 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     <p>Answer</p>
                     <input
                         {...register('answer', {
-                            minLength:1,
+                            minLength: {
+                                value:1,
+                                message: 'Empty field!'
+                            },
                         })}
                     />
                     <ImgVideoAudio file={files.fileAnswer}/>

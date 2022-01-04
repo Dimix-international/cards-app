@@ -147,8 +147,14 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
                         <p>Nickname</p>
                         <input
                             {...register('nickName', {
-                                minLength:3,
-                                maxLength:30,
+                                minLength:{
+                                    value:3,
+                                    message: 'At least 3 symbols!'
+                                },
+                                maxLength:{
+                                    value:30,
+                                    message: 'Max 30 symbols!'
+                                },
                             })}
                         />
                         {
