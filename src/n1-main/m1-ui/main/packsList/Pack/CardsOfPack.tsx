@@ -103,6 +103,12 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         } = useGetCardsOfPackQuery(queryParams, {
             skip: !isAuth,
         });
+        const [upd] = useLazyGetCardsOfPackQuery();
+
+        useEffect(() => {
+            upd(queryParams); //для обновления звезд
+        },[])
+
         const [createCard] = useCreateNewCardMutation();
         const [deleteCard] = useDeleteCardMutation();
         const [updateCard] = useEditCardMutation();

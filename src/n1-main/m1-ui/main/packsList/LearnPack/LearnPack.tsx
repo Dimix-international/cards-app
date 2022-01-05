@@ -3,7 +3,8 @@ import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 import {
     CardType,
-    useGetCardsOfPackQuery, useLazyGetCardsOfPackQuery,
+    useGetCardsOfPackQuery,
+    useLazyGetCardsOfPackQuery,
     useSetCardGradeMutation
 } from "../../../../m3-dal/cards-api";
 import {Loader} from "../../../common/Loader/Loader";
@@ -15,7 +16,6 @@ import {
 import {QuestionCard} from "./Question/QuestionCard";
 import {AnswerWithRate} from "./AnswerWithRate/AnswerWithRateCard";
 import {getCard} from "../../../../../utils/GetRandomCard";
-import {useLazyGetAllPacksQuery} from "../../../../m3-dal/pack-list-api";
 
 
 type LocationState = {
@@ -86,8 +86,6 @@ export const LearnPack = () => {
                 await updateGradesOfCards({grade: learningCardsOfPack[i].grade, card_id: learningCardsOfPack[i]._id})
             }
         }
-        await updateCards({cardsPack_id: cardId, pageCount: 10})
-
         dispatch(setLearningCards([]))
 
     }, [learningCardsOfPack, updateGradesOfCards,navigate, dispatch])
