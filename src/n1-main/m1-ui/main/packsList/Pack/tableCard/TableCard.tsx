@@ -44,6 +44,10 @@ export const TableCard: React.FC<TableType> = ({
                                         id: row.original._id,
                                         question:row.original.question,
                                         answer:row.original.answer,
+                                        answerImg: row.original.answerImg,
+                                        answerVideo: row.original.answerVideo,
+                                        questionImg: row.original.questionImg,
+                                        questionVideo: row.original.questionVideo,
                                     })
                                 }
                                 }
@@ -56,6 +60,10 @@ export const TableCard: React.FC<TableType> = ({
                                             id: row.original._id,
                                             question:row.original.question,
                                             answer:row.original.answer,
+                                            answerImg: row.original.answerImg,
+                                            answerVideo: row.original.answerVideo,
+                                            questionImg: row.original.questionImg,
+                                            questionVideo: row.original.questionVideo,
                                         })
                                     }
                                     }>edit

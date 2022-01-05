@@ -31,11 +31,14 @@ table tr {
 
 table td {
     font-size: 1.3rem;
+    line-height: 150%;
     padding: 10px;
     /*word-wrap: break-word;*/
 
     div {
         max-width: 270px;
+        max-height: 50px;
+        overflow: hidden;
     }
 }
 

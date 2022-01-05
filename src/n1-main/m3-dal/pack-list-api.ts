@@ -64,7 +64,7 @@ export const packListApi = createApi({
             transformResponse: (result: { newCardsPack: CreatePackType }) => ({
                 ...result.newCardsPack
             }),
-            invalidatesTags: ['Packs']
+            /*invalidatesTags: ['Packs']*/
         }),
         deletePack: build.mutation<ObjectPackType, { id: string }>({
             query: (arg) => ({

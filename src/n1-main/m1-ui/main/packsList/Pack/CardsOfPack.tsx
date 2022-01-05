@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {
-    QueryParamsGetCardsOfPackType,
+    QueryParamsGetCardsOfPackType, RequestCreateCard,
     useCreateNewCardMutation,
     useDeleteCardMutation,
     useEditCardMutation,
-    useGetCardsOfPackQuery
+    useGetCardsOfPackQuery, useLazyGetCardsOfPackQuery
 } from "../../../../m3-dal/cards-api";
 import {TableCard} from "./tableCard/TableCard";
 import s from './CardsOfPack.module.scss'
@@ -56,7 +56,7 @@ const selectOptions: Array<OptionsSelectType> = [
 ]
 type PackType = {}
 type LocationStateType = {
-    userIdPack:string
+    userIdPack: string
     packName: string;
 }
 
@@ -74,6 +74,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         const isAuth = useAppSelector(state => state.app.isAuthUser);
         const userId = useAppSelector(state => state.loginization.user._id);
         const triggerModal = useAppSelector(state => state.app.modalTrigger);
+        const queryPackParams = useAppSelector(state => state.packList);
 
         const [queryParams, setQueryParams] = useState<QueryParamsGetCardsOfPackType>({
             cardsPack_id: cardId,
@@ -89,6 +90,10 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             id: '',
             question: '',
             answer: '',
+            answerImg: null,
+            answerVideo: null,
+            questionImg: null,
+            questionVideo: null,
         });
 
         const {
@@ -99,43 +104,49 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             skip: !isAuth,
         });
         const [createCard] = useCreateNewCardMutation();
-        const [updatePacksList] = useLazyGetAllPacksQuery();
         const [deleteCard] = useDeleteCardMutation();
-        const[updateCard] = useEditCardMutation();
+        const [updateCard] = useEditCardMutation();
+        const [getCards] = useLazyGetCardsOfPackQuery();
+        const [updatePacks] = useLazyGetAllPacksQuery();
 
-        //чтобы обновить пакеты, при добавлении/удалении/редактировании карточки
-        const queryParamsPacksList = useAppSelector(state => state.packList);
 
         const sortData = useCallback(() => {
             const sort: SortType = queryParams.sortCards === '0updated' ? '1updated' : '0updated';
             setQueryParams({...queryParams, sortCards: sort})
         }, [queryParams]);
 
-        const goBack = () => navigate(-1);
+        const goBack = async () => {
+            await updatePacks(queryPackParams)
+            navigate(-1)
+        };
 
         const searchCardName = useCallback((searchValue: string) => {
             setQueryParams({...queryParams, cardQuestion: searchValue})
         }, [queryParams]);
 
         const setCurrentPageHandler = useCallback((page: number) => {
-            if(isAuth) {
+            if (isAuth) {
                 setQueryParams({...queryParams, page})
             }
-        }, [isAuth,queryParams]);
+        }, [isAuth, queryParams]);
 
-        const createCardHandler = useCallback(async (id: string, question: string, answer: string) => {
-
+        const createCardHandler = useCallback(async (data: CardInfoType) => {
             dispatch(setAppStatus('loading'));
 
             try {
                 await createCard({
-                    cardsPack_id: cardId,
-                    question,
-                    answer
+                    card: {
+                        cardsPack_id: cardId,
+                        question: data.question,
+                        answer: data.answer,
+                        answerImg: data.answerImg || null,
+                        answerVideo: data.answerVideo || null,
+                        questionImg: data.questionImg || null,
+                        questionVideo: data.questionVideo || null,
+
+                    }
                 });
-
-                await updatePacksList({...queryParamsPacksList}); //обновляем все пакеты
-
+                await getCards(queryParams)
                 dispatch(setIsOpenedModal(false));
                 dispatch(setAppStatus('succeeded'));
 
@@ -143,7 +154,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             } catch (e) {
                 dispatch(setAppStatus('failed'));
             }
-        }, [createCard, dispatch, cardId, updatePacksList, queryParamsPacksList]);
+        }, [createCard, dispatch, cardId]);
 
         const deleteCardHandler = useCallback(async () => {
 
@@ -151,58 +162,59 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             try {
 
                 await deleteCard({id: cardInfo.id});
-                await updatePacksList({...queryParamsPacksList}); //обновляем все пакеты
-
                 dispatch(setIsOpenedModal(false));
                 dispatch(setAppStatus('succeeded'));
             } catch (e) {
                 dispatch(setAppStatus('failed'));
             }
-        }, [cardInfo.id, deleteCard, dispatch, queryParamsPacksList, updatePacksList])
+        }, [cardInfo.id, deleteCard, dispatch,])
 
-        const editCardHandler = useCallback(async (id :string, question: string, answer: string) => {
+        const editCardHandler = useCallback(async (data: CardInfoType) => {
             dispatch(setAppStatus('loading'));
 
             try {
                 await updateCard({
-                    _id: id,
-                    question,
-                    answer
+                    card: {
+                        _id: data.id,
+                        question: data.question,
+                        answer: data.answer,
+                        answerImg: data.answerImg || null,
+                        answerVideo: data.answerVideo || null,
+                        questionImg: data.questionImg || null,
+                        questionVideo: data.questionVideo || null,
+                    }
                 });
-
-                await updatePacksList({...queryParamsPacksList}); //обновляем все пакеты
 
                 dispatch(setIsOpenedModal(false));
                 dispatch(setAppStatus('succeeded'));
 
-
             } catch (e) {
                 dispatch(setAppStatus('failed'));
             }
-        }, [dispatch, queryParamsPacksList, updateCard, updatePacksList])
+        }, [dispatch, updateCard])
 
 
         const openCloseModalWindow = useCallback(
             (value: boolean, triggerName: ModalTriggerType, info?: CardInfoType) => {
 
-            dispatch(setIsOpenedModal(value));
+                dispatch(setIsOpenedModal(value));
 
-            if (!value) {
+                if (!value) {
 
-                setTimeout(() => {
-                    setCardInfo({id: '', question: '', answer: ''});
-                    dispatch(setTriggerModal(null));
-                }, 400)
+                    setTimeout(() => {
+                        setCardInfo({id: '', question: '', answer: ''});
+                        dispatch(setTriggerModal(null));
+                    }, 400)
 
-            } else {
-                if (triggerName === 'deleteCard' || triggerName === 'editCard') {
-                    info && setCardInfo({...info});
                 } else {
-                    setCardInfo({id: '', question: '', answer: ''});
+                    if (triggerName === 'deleteCard' || triggerName === 'editCard') {
+                        info && setCardInfo({...info});
+                    } else {
+                        setCardInfo({id: '', question: '', answer: ''});
+                    }
+                    dispatch(setTriggerModal(triggerName));
                 }
-                dispatch(setTriggerModal(triggerName));
-            }
-        }, [dispatch]);
+            }, [dispatch]);
 
         useEffect(() => {
             const el = selectOptions.find(option => option.id === selectedOptionId);
@@ -215,7 +227,7 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         }, [selectedOptionId]);
 
 
-    return (
+        return (
             <>
                 {
                     isLoading
@@ -295,21 +307,21 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                                                         trigger={'addCard'}
                                                     />
                                                     : triggerModal === 'editCard'
-                                                        ? < AddEditCardModal
-                                                            setNewCard={editCardHandler}
-                                                            openCloseModalWindow={openCloseModalWindow}
-                                                            title={'Edit card'}
-                                                            trigger={'editCard'}
-                                                            cardInfo={cardInfo}
-                                                        />
-                                                    : triggerModal === 'deleteCard'
-                                                    ? <DeleteModalWindow
-                                                        nameValue={cardInfo.question}
-                                                        deletePack={deleteCardHandler}
+                                                    ? < AddEditCardModal
+                                                        setNewCard={editCardHandler}
                                                         openCloseModalWindow={openCloseModalWindow}
-                                                        triggerDelete={'deleteCard'}
+                                                        title={'Edit card'}
+                                                        trigger={'editCard'}
+                                                        cardInfo={cardInfo}
                                                     />
-                                                    : false
+                                                    : triggerModal === 'deleteCard'
+                                                        ? <DeleteModalWindow
+                                                            nameValue={cardInfo.question}
+                                                            deletePack={deleteCardHandler}
+                                                            openCloseModalWindow={openCloseModalWindow}
+                                                            triggerDelete={'deleteCard'}
+                                                        />
+                                                        : false
                                             }
                                         </Modal>
                                     </>

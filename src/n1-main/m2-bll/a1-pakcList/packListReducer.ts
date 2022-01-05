@@ -5,7 +5,7 @@ import {QueryParamsGetAllCardsType} from "../../m3-dal/pack-list-api";
 const slice = createSlice({
     name: 'PackList',
     initialState: {
-        packName: null,
+        packName: '',
         min: 0,
         max: 50,
         sortPacks: '0updated',

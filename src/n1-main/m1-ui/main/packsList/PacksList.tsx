@@ -8,6 +8,7 @@ import {
     useDeletePackMutation,
     useGetAllPacksQuery,
     useUpdatePackMutation,
+    useLazyGetAllPacksQuery,
 } from "../../../m3-dal/pack-list-api";
 import {Loader} from "../../common/Loader/Loader";
 import s from './packList.module.scss'
@@ -105,6 +106,8 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const [updateProfile] = useUpdateProfileUserMutation();
     const [checkAuthUser] = useCheckAuthUserMutation();
 
+    const[lazyGetPack] = useLazyGetAllPacksQuery();
+
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
     const setCurrentPageHandler = useCallback((page: number) => {
@@ -162,9 +165,16 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
 
     const createPackHandler = useCallback(async (name: string) => {
         dispatch(setAppStatus('loading'));
+
         try {
 
             const response = await createPack({name});
+
+            await lazyGetPack({...queryParams,
+                //чтобы когда мы на profile получали толко наши packs list
+                user_id: triggerPage === 'profilePage' ? userId : queryParams.user_id})
+
+
             dispatch(setIsOpenedModal(false));
             dispatch(setAppStatus('succeeded'));
             navigate(`/packs-list/cards/card?cardsPack_id=${(response as AxiosResponse).data._id}`,

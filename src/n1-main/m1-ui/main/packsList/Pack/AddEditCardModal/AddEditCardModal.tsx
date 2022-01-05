@@ -1,10 +1,15 @@
-import React, {DetailedHTMLProps, InputHTMLAttributes, useState} from "react";
+import React, {
+    DetailedHTMLProps,
+    InputHTMLAttributes,
+    useEffect,
+    useState
+} from "react";
 import s from './AddEditCardModal.module.scss'
 
 import SuperButton from "../../../../common/SuperButton/SuperButton";
 import {ModalTriggerType} from "../../../../../m2-bll/app-reducer";
 import {CardInfoType} from "../CardsOfPack";
-import {useForm} from "react-hook-form";
+import {get, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {convertBase64} from "../../../../../../utils/convertBase64";
@@ -38,7 +43,7 @@ const dataValidationSchema = yup.object({
 */
 
 type AddNewCardModalType = {
-    setNewCard: (id: string, question: string, answer: string) => void
+    setNewCard: (data: CardInfoType) => void
     openCloseModalWindow: (value: boolean, trigger: ModalTriggerType) => void
     title: string
     cardInfo?: CardInfoType
@@ -89,8 +94,51 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
         /*resolver: yupResolver(dataValidationSchema)*/
     });
 
-    const sendNewValuesCard = (data: CardInfoType & FilesType) => {
-        setNewCard(data.id, data.question, data.answer);
+    useEffect(() => {
+        const {fileQuestion, fileAnswer} = getValues();
+        if(fileQuestion) {
+            const str = fileQuestion.slice(fileQuestion.indexOf(':') + 1, fileQuestion.indexOf(';'))
+            setFiles({...files, fileQuestion:{
+                name:fileQuestion,
+                    type:str
+            }})
+        }
+        if(fileAnswer) {
+            const str = fileAnswer.slice(fileAnswer.indexOf(':') + 1, fileAnswer.indexOf(';'))
+            setFiles({...files, fileAnswer:{
+                    name:fileAnswer,
+                    type:str
+                }})
+        }
+    },[getValues])
+
+    const sendNewValuesCard = (dataForm: CardInfoType & FilesType) => {
+        setNewCard({
+            ...dataForm,
+            questionImg:
+                files.fileQuestion.type === 'image/png' ||
+                files.fileQuestion.type === 'image/jpeg' ||
+                files.fileQuestion.type === 'image/svg+xml'
+                    ? files.fileQuestion.name : null,
+
+            questionVideo:
+                files.fileQuestion.type === 'video/mp4' ||
+                files.fileQuestion.type === 'video/ogg' ||
+                files.fileQuestion.type === 'video/webm'
+                    ? files.fileQuestion.name : null,
+
+            answerImg:
+                files.fileAnswer.type === 'image/png' ||
+                files.fileAnswer.type === 'image/jpeg' ||
+                files.fileAnswer.type === 'image/svg+xml'
+                    ? files.fileQuestion.name : null,
+
+            answerVideo:
+                files.fileAnswer.type === 'video/mp4' ||
+                files.fileAnswer.type === 'video/ogg' ||
+                files.fileAnswer.type === 'video/webm'
+                    ? files.fileQuestion.name : null,
+        });
     }
     const closeModalWindow = () => {
         openCloseModalWindow(false, trigger)
@@ -100,8 +148,8 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
 
         const values = getValues();
 
-        if ((e as any)?.target?.dataset?.name) {
-            const trigger: string = (e as any)?.target?.dataset?.name;
+        if ((e as any).target.dataset.name) {
+            const trigger: string = (e as any).target.dataset.name;
 
             if (trigger === 'question') {
                 const fileValue = values.fileQuestion[0];
@@ -159,7 +207,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     <input
                         {...register('question', {
                             minLength: {
-                                value:1,
+                                value: 1,
                                 message: 'Empty field!'
                             }
                         })}
@@ -196,7 +244,7 @@ export const AddEditCardModal: React.FC<AddNewCardModalType> = React.memo(props 
                     <input
                         {...register('answer', {
                             minLength: {
-                                value:1,
+                                value: 1,
                                 message: 'Empty field!'
                             },
                         })}

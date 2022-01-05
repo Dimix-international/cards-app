@@ -11,6 +11,7 @@ import {useForm} from "react-hook-form";
 
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup'
+import * as Events from "events";
 
 type InfoProfileType = {
     nickName: string,
@@ -88,14 +89,13 @@ export const EditProfileModal: React.FC<EditProfileModalType> = React.memo(props
 
             }
         }
-
         const closeModalWindow = () => {
             openCloseModalWindow(false, trigger)
         }
-
         const changeFileHandler = async (e: FormEvent<HTMLFormElement>) => {
 
-            if (e.currentTarget.id === 'file') {
+            if ((e as any).target.id === 'file') {
+
                 const {avatar} = getValues();
                 const avatarValue = avatar[0];
                 if (avatarValue) {

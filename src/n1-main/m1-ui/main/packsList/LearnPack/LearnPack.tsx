@@ -1,14 +1,9 @@
 import s from './LearnPack.module.scss'
-import {
-    Navigate,
-    useLocation,
-    useNavigate,
-    useSearchParams
-} from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../../../../hook/redux";
 import {
     CardType,
-    useGetCardsOfPackQuery,
+    useGetCardsOfPackQuery, useLazyGetCardsOfPackQuery,
     useSetCardGradeMutation
 } from "../../../../m3-dal/cards-api";
 import {Loader} from "../../../common/Loader/Loader";
@@ -17,10 +12,10 @@ import {
     setGradeOfCard,
     setLearningCards
 } from "../../../../m2-bll/a2-learnPack/learnPackReducer";
-import {useLazyGetAllPacksQuery} from "../../../../m3-dal/pack-list-api";
 import {QuestionCard} from "./Question/QuestionCard";
 import {AnswerWithRate} from "./AnswerWithRate/AnswerWithRateCard";
 import {getCard} from "../../../../../utils/GetRandomCard";
+import {useLazyGetAllPacksQuery} from "../../../../m3-dal/pack-list-api";
 
 
 type LocationState = {
@@ -31,14 +26,13 @@ export const LearnPack = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const cardId = searchParams.get('cardsPack_id') || ''; //поисковый запрос, || '' -если не найдет
     const isAuth = useAppSelector(state => state.app.isAuthUser);
-    const queryParamsPacksList = useAppSelector(state => state.packList);
     const location = useLocation();
 
     const {packName} = location.state as LocationState;
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-
+   /* const queryPackParams = useAppSelector(state => state.packList);*/
     const learningCardsOfPack = useAppSelector(state => state.learningPack.cards)
 
     const [isShowQuestion, setIsShowQuestion] = useState(true);
@@ -47,20 +41,18 @@ export const LearnPack = () => {
         data,
         isLoading,
         isSuccess,
+        isFetching,
     } = useGetCardsOfPackQuery({cardsPack_id: cardId, pageCount: 10}, {
         skip: !isAuth,
     });
-
-    const [updatePacksList, {
-        isLoading: isLoadingUpdatePack,
-        isFetching: isFetchingUpdatePack,
-        isSuccess: isSuccessUpdatePack,
-    }] = useLazyGetAllPacksQuery();
 
     const [updateGradesOfCards, {
         isLoading: isLoadingUpdateCardGrade,
         isSuccess: isSuccessUpdateCardGrade,
     }] = useSetCardGradeMutation();
+
+   /* const [updatePacks] = useLazyGetAllPacksQuery();*/
+    const [updateCards] = useLazyGetCardsOfPackQuery();
 
     const [card, setCard] = useState<CardType>({
         answer: '',
@@ -84,14 +76,21 @@ export const LearnPack = () => {
     });
 
     const finishLearn = useCallback(async () => {
-        await learningCardsOfPack.forEach(card => {
-            card.grade > 0 && updateGradesOfCards({grade: card.grade, card_id: card._id})
-        })
-        await updatePacksList({...queryParamsPacksList});
-    }, [
-        queryParamsPacksList, updatePacksList,
-        learningCardsOfPack, updateGradesOfCards
-    ])
+
+        if(learningCardsOfPack.length === 0) {
+            navigate('/', {replace: true})
+            return
+        }
+        for (let i = 0; i < learningCardsOfPack.length; i++) {
+            if (learningCardsOfPack[i].grade > 0 ) {
+                await updateGradesOfCards({grade: learningCardsOfPack[i].grade, card_id: learningCardsOfPack[i]._id})
+            }
+        }
+        await updateCards({cardsPack_id: cardId, pageCount: 10})
+
+        dispatch(setLearningCards([]))
+
+    }, [learningCardsOfPack, updateGradesOfCards,navigate, dispatch])
 
     const showAnswer = useCallback(() => {
         setIsShowQuestion(false)
@@ -116,14 +115,14 @@ export const LearnPack = () => {
     }, [learningCardsOfPack, isSuccess])
 
     useEffect(() => {
-        (isSuccessUpdateCardGrade || isSuccessUpdatePack) && navigate(-1)
-    },[isSuccessUpdateCardGrade,isSuccessUpdatePack, navigate ])
+        isSuccessUpdateCardGrade && navigate('/', {replace: true})
+    },[isSuccessUpdateCardGrade, navigate ])
 
 
     return (
         <>
             {
-                isLoading || isLoadingUpdateCardGrade || isFetchingUpdatePack || isLoadingUpdatePack
+                isLoading || isLoadingUpdateCardGrade || isFetching
                     ? <Loader />
                     : <div className={s.container}>
                         <h1 className={s.title}>{`Learn '${packName}'`}</h1>

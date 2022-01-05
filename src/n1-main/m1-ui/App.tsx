@@ -31,7 +31,6 @@ export const App = () => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const isAuth = useAppSelector(state => state.app.isAuthUser);
 
     useEffect(() => {
         checkAuthUser().unwrap()
@@ -42,7 +41,7 @@ export const App = () => {
             .catch(error => {
                 navigate('/login', {replace: true});
             })
-    }, [])
+    }, [checkAuthUser, dispatch])
 
     const finallyError = useMemo(() => {
         return errorAuthUser

@@ -48,6 +48,24 @@ export type QueryParamsGetCardsOfPackType = {
     page?: number,
     pageCount?: number,
 }
+export type RequestCreateCard = {
+    cardsPack_id: string,
+    question: string,
+    answer: string,
+    answerImg?: null | string
+    answerVideo?: null | string
+    questionImg?: null | string
+    questionVideo?: null | string
+}
+export type RequestEditCard = {
+    _id: string,
+    question: string,
+    answer: string,
+    answerImg?: null | string
+    answerVideo?: null | string
+    questionImg?: null | string
+    questionVideo?: null | string
+}
 
 export const cardsApi = createApi({
     reducerPath: 'cardsApi',
@@ -64,13 +82,13 @@ export const cardsApi = createApi({
             }),
             providesTags: ['Cards']
         }),
-        createNewCard: build.mutation<{ newCard: CardType }, { cardsPack_id: string, question: string, answer: string }>({
+        createNewCard: build.mutation<{ newCard: CardType }, { card: RequestCreateCard }>({
             query: (arg) => ({
                 url: 'cards/card',
                 method: 'POST',
-                data: {card: arg},
+                data: {...arg},
             }),
-            invalidatesTags: ['Cards']
+            /*invalidatesTags: ['Cards']*/
         }),
         deleteCard: build.mutation<{ deletedCard: CardType }, { id: string }>({
             query: (arg) => ({
@@ -80,11 +98,11 @@ export const cardsApi = createApi({
             }),
             invalidatesTags: ['Cards']
         }),
-        editCard: build.mutation<void, { _id: string, question: string, answer: string }>({
+        editCard: build.mutation<void, { card: RequestEditCard }>({
             query: (arg) => ({
                 url: 'cards/card',
                 method: 'PUT',
-                data: {card: arg},
+                data: {...arg},
             }),
             invalidatesTags: ['Cards'],
         }),
@@ -94,13 +112,14 @@ export const cardsApi = createApi({
                 method: 'PUT',
                 data: {...arg}
             }),
-            invalidatesTags: ['Cards'],
+            /*invalidatesTags: ['Cards'],*/
         })
     })
 });
 
 export const {
     useGetCardsOfPackQuery,
+    useLazyGetCardsOfPackQuery,
     useCreateNewCardMutation,
     useDeleteCardMutation,
     useEditCardMutation,

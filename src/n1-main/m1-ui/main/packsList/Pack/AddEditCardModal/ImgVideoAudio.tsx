@@ -8,7 +8,6 @@ type ImgVideoAudioType = {
 export const ImgVideoAudio: React.FC<ImgVideoAudioType> = React.memo(props => {
 
     const {file} = props;
-
     return (
         <>
             {
