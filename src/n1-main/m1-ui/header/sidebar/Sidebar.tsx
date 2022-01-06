@@ -7,7 +7,7 @@ import {useAppDispatch} from "../../../../hook/redux";
 import {useLogOutUserMutation} from "../../../m3-dal/auth-api";
 import {setAppIsAuth, setAppStatus} from "../../../m2-bll/app-reducer";
 
-export const Sidebar = () => {
+export const Sidebar = React.memo(() => {
     const dispatch = useAppDispatch()
 
     const [logOutUser] = useLogOutUserMutation();
@@ -25,14 +25,14 @@ export const Sidebar = () => {
         }
     }
 
-
     return (
         <div className={s.sidebar}>
             <ul className={s.list}>
                 <li>
-                    <SuperButton onClick={logOutHandler} value={'LogOut'}>LogOut</SuperButton>
+                    <SuperButton onClick={logOutHandler}
+                                 value={'LogOut'}>LogOut</SuperButton>
                 </li>
             </ul>
         </div>
     )
-}
+})

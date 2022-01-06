@@ -4,7 +4,7 @@ import s from './Header.module.scss'
 import {Tabs} from "./tabs/Tabs";
 
 
-export const Header = () => {
+export const Header = React.memo( () => {
 
     return (
         <div className={s.header}>
@@ -14,4 +14,4 @@ export const Header = () => {
             </div>
         </div>
     );
-}
+})

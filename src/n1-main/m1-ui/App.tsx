@@ -47,9 +47,8 @@ export const App = () => {
         return errorAuthUser
     }, [errorAuthUser])
 
-    if (isLoading) {
-        return <Loader/>
-    }
+    if (isLoading) return <Loader/>;
+
 
     return (
         <div className="App">

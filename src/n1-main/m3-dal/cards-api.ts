@@ -88,7 +88,6 @@ export const cardsApi = createApi({
                 method: 'POST',
                 data: {...arg},
             }),
-            /*invalidatesTags: ['Cards']*/
         }),
         deleteCard: build.mutation<{ deletedCard: CardType }, { id: string }>({
             query: (arg) => ({
@@ -112,7 +111,6 @@ export const cardsApi = createApi({
                 method: 'PUT',
                 data: {...arg}
             }),
-            /*invalidatesTags: ['Cards'],*/
         })
     })
 });

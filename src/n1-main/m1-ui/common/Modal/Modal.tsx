@@ -1,6 +1,7 @@
 import React, {MouseEvent} from "react";
 import s from './Modal.module.scss'
 import {ModalTriggerType} from "../../../m2-bll/app-reducer";
+import ReactDOM from "react-dom";
 
 
 type ModalType = {
@@ -23,13 +24,13 @@ export const Modal: React.FC<ModalType> = React.memo(props => {
 
 
     return (
-        <div className={finallyClassModal} onClick={closeModal}>
+        ReactDOM.createPortal(<div className={finallyClassModal} onClick={closeModal}>
             <div
                 className={finallyClassContent}
                 onClick={clickContent}
             >
                 {children}
             </div>
-        </div>
+        </div>, document.body)
     )
 })

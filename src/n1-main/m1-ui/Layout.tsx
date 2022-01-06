@@ -10,7 +10,7 @@ import {useAppSelector} from "../../hook/redux";
 type LayoutType = {
     error?: FinallyErrorResponseType
 }
-export const Layout: React.FC<LayoutType> = ({error}) => {
+export const Layout: React.FC<LayoutType> = React.memo(({error}) => {
 
     const isAuth = useAppSelector(state => state.app.isAuthUser);
 
@@ -31,4 +31,4 @@ export const Layout: React.FC<LayoutType> = ({error}) => {
             }
         </>
     );
-}
+})
