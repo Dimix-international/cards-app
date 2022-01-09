@@ -55,6 +55,7 @@ export const AnswerWithRate: React.FC<AnswerWithRateType> = React.memo((props) =
     const showNextQuestion = () => {
         nextQuestion(checkedRate)
     }
+
     const setRateHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setCheckedRate(Number(e.currentTarget.value))
     }

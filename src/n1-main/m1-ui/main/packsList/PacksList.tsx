@@ -35,6 +35,7 @@ import {setPackListParams} from "../../../m2-bll/a1-pakcList/packListReducer";
 import {User} from "../profile/User/User";
 import {EditProfileModal} from "./EditProfileModal/EditProfileModal";
 import {setUser} from "../../../m2-bll/loginization-reducer";
+import {setValueOfRadioBtn} from "../../../../hook/setValueOfRadioBtn";
 
 
 export type OptionsSelectType = {
@@ -90,7 +91,6 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const {
         data: allCards,
         isLoading,
-        isFetching,
         error: errorGettingPacks
     } = useGetAllPacksQuery({
         ...queryParams,
@@ -106,7 +106,7 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     const [updateProfile] = useUpdateProfileUserMutation();
     const [checkAuthUser] = useCheckAuthUserMutation();
 
-    const[lazyGetPack] = useLazyGetAllPacksQuery();
+    const [lazyGetPack] = useLazyGetAllPacksQuery();
 
     const data = useMemo(() => allCards ? allCards.cardPacks : [], [allCards]);
 
@@ -119,15 +119,9 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
     }, [queryParams, dispatch])
 
     const setRadioButtonsValue = useCallback((name: string) => {
-        if (name === 'my') {
-            dispatch(setPackListParams({
-                ...queryParams,
-                user_id: userId
-            }))
-        } else {
-            dispatch(setPackListParams({...queryParams, user_id: null}))
-        }
-    }, [queryParams, userId, dispatch]);
+        const query = setValueOfRadioBtn({name, queryParams, userId})
+        dispatch(setPackListParams(query))
+    }, [dispatch, queryParams, userId]);
 
     const sortData = useCallback(() => {
         const sort: SortType = queryParams.sortPacks === '0updated' ? '1updated' : '0updated';
@@ -170,9 +164,11 @@ export const PacksList: React.FC<PacksListType> = React.memo((props) => {
 
             const response = await createPack({name});
 
-            await lazyGetPack({...queryParams,
+            await lazyGetPack({
+                ...queryParams,
                 //чтобы когда мы на profile получали толко наши packs list
-                user_id: triggerPage === 'profilePage' ? userId : queryParams.user_id})
+                user_id: triggerPage === 'profilePage' ? userId : queryParams.user_id
+            })
 
 
             dispatch(setIsOpenedModal(false));

@@ -4,7 +4,6 @@ export const convertBase64 = async (file:Blob) => {
     return new Promise((resolve, reject) => {
 
         const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
 
         fileReader.onload = () => {
             resolve(fileReader.result)
@@ -12,6 +11,8 @@ export const convertBase64 = async (file:Blob) => {
         fileReader.onerror = (error) => {
             reject(error)
         }
+
+        fileReader.readAsDataURL(file);
 
     })
 }
