@@ -29,6 +29,7 @@ import {
 import {Modal} from "../../../common/Modal/Modal";
 import {AddEditCardModal} from "./AddEditCardModal/AddEditCardModal";
 import {DeleteModalWindow} from "../DeletePackModal/DeleteModalWindow";
+import {Button, IconButton} from "@mui/material";
 
 
 export type CardInfoType = {
@@ -103,17 +104,14 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
         } = useGetCardsOfPackQuery(queryParams, {
             skip: !isAuth,
         });
-        const [upd] = useLazyGetCardsOfPackQuery();
+        const [updateStars] = useLazyGetCardsOfPackQuery();
 
-        useEffect(() => {
-            upd(queryParams); //для обновления звезд
-        },[])
 
         const [createCard] = useCreateNewCardMutation();
         const [deleteCard] = useDeleteCardMutation();
         const [updateCard] = useEditCardMutation();
         const [getCards] = useLazyGetCardsOfPackQuery();
-        const [updatePacks] = useLazyGetAllPacksQuery();
+        const [updatePacks, {isFetching}] = useLazyGetAllPacksQuery();
 
 
         const sortData = useCallback(() => {
@@ -199,7 +197,6 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             }
         }, [dispatch, updateCard])
 
-
         const openCloseModalWindow = useCallback(
             (value: boolean, triggerName: ModalTriggerType, info?: CardInfoType) => {
 
@@ -232,6 +229,10 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
             }
         }, [selectedOptionId]);
 
+        useEffect(() => {
+            updateStars(queryParams); //для обновления звезд
+        }, [])
+
 
         return (
             <>
@@ -240,7 +241,9 @@ export const CardsOfPack: React.FC<PackType> = React.memo(props => {
                         ? <Loader/>
                         : <div className={s.container}>
                             <div className={s.header}>
-                                <ArrowBackIcon className={s.arrow} onClick={goBack}/>
+                                <IconButton onClick={goBack} disabled={isFetching}>
+                                    <ArrowBackIcon className={s.arrow}/>
+                                </IconButton>
                                 <h1 className={s.title}>{packInfo.packName}</h1>
                             </div>
                             <div className={s.search}>
